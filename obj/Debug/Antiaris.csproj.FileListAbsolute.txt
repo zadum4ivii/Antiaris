@@ -1,0 +1,2 @@
+C:\Users\zadum4ivii\Documents\my games\Terraria\ModLoader\Mod Sources\Antiaris\obj\Debug\Antiaris.csprojAssemblyReference.cache
+C:\Users\zadum4ivii\Documents\my games\Terraria\ModLoader\Mod Sources\Antiaris\obj\Debug\Antiaris.csproj.CoreCompileInputs.cache

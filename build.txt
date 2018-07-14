@@ -1,0 +1,10 @@
+version = 0.1.0.5
+displayName = The Antiaris
+author = Zadum4ivii, Sprywisp, Gouvod, Vikri, IgnusThaum, Nokilos, CookieSam
+homepage = https://forums.terraria.org/index.php?threads/antiaris.59884/
+hideCode = true
+hideResources = true
+includeSource = false
+buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*, .git\*,
+includePDB = true
+weakReferences = TerrariaOverhaul

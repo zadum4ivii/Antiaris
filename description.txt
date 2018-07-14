@@ -1,0 +1,24 @@
+﻿[i/s1:75] [c/51DA5F:What is Antiaris?]
+Antiaris is a new project from part of team which made Tremor Mod. The difference is that content in Antiaris is more interesting, balanced and unique, unlike in Tremor, basically "Quality > Quantity".
+Our team is trying to make the game bigger and make the player feel more interested in game.
+
+[i/s1:75] [c/51DA5F:What does this mod add to the game?]
+[c/51DA5F:●] 418 Items
+[c/51DA5F:●] 24 Mobs
+[c/51DA5F:●] 1 Town NPC
+[c/51DA5F:●] 2 Bosses
+[c/51DA5F:●] 6 New structures
+[c/51DA5F:●] 2 New mounts
+[c/51DA5F:●] 2 Music tracks
+[c/51DA5F:●] Support of Boss Checklist mod by Jopojelly
+
+[i/s1:75] [c/51DA5F:Credits:]
+[c/51DA5F:●] Re-Logic - for creating Terraria
+[c/51DA5F:●] tModLoader team - for developing tModLoader
+[c/51DA5F:●] Zoomo - for allowing us to use his sprites & ideas
+[c/51DA5F:●] Sergo - for allowing us to use his sprites & ideas
+[c/51DA5F:●] Bla2e - for making armor animation sheets
+[c/51DA5F:●] TMRC - for allowing us to use his sprites
+[c/51DA5F:●] Bry-ccentric - for allowing us to use his "More Shadowflame Items" idea & sprites
+[c/51DA5F:●] Snickerbobble - for allowing us to use his "Hidden Hearts" idea & sprites
+[c/51DA5F:●] Phobostar - for making animation for Zadum4ivii's armor set
