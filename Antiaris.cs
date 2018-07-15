@@ -133,7 +133,7 @@ namespace Antiaris
 				{
 					AddMusicBox(GetSoundSlot(SoundType.Music, "Sounds/Music/TowerKeeper"), ItemType("TowerKeeperMusicBox1"), TileType("TowerKeeperMusicBox1"));
 				}
-				else
+				else if (!WorldGen.crimson)
 				{
 					AddMusicBox(GetSoundSlot(SoundType.Music, "Sounds/Music/TowerKeeper"), ItemType("TowerKeeperMusicBox2"), TileType("TowerKeeperMusicBox2"));
 				}
@@ -188,9 +188,9 @@ namespace Antiaris
 			AddTranslation(text);
 
             text = CreateTranslation("Note1");
-            text.SetDefault("If you won't pay off your debts\n - we will kill you in your own\nhouse. Be sure, you will not\nsurvive if you don't bring gold\nto our camp on the east.");
-            text.AddTranslation(GameCulture.Chinese, " 欠债还钱，天经地义\n如果你不想因为自己欠的\n债而死就来东面的营地\n还钱");
-            text.AddTranslation(GameCulture.Russian, "Не заплатишь долги -\nубьем тебя в твоем же\nдоме. Будь уверен, ты\nне выживешь, если не\nпринесешь золото в наш\nлагерь на востоке.");
+            text.SetDefault("   If you don't give us\n  the information we need,\n   we will slaughter you.\n Don't pretend you don't\n     know where the thing\n we look for is.");
+            text.AddTranslation(GameCulture.Chinese, "      如果你不提供\n   我们所需要的证据，\n   我们会宰了你。\n      不要假装你不知道那些，\n   我们在暗中观察你。");
+            text.AddTranslation(GameCulture.Russian, "Если ты не дашь нам ин-\n     формацию, которую\nумалчиваешь, мы тебя\nуничтожим. Не притво-\n  ряйся, что не знаешь,\n   где то, что мы ищем.");
 			AddTranslation(text);
 
             text = CreateTranslation("PirateHelp1");
@@ -554,9 +554,9 @@ namespace Antiaris
 			AddTranslation(text);		
 			
 			text = CreateTranslation("Name20");
-			text.SetDefault("'How Krampus stole Christmas'");
-			text.AddTranslation(GameCulture.Chinese, "“Krampus”偷走了礼物");
-			text.AddTranslation(GameCulture.Russian, "'Как Крампус украл Рожедство'");
+			text.SetDefault("'Stolen Christmas'");
+			text.AddTranslation(GameCulture.Chinese, "被盗的圣诞节");
+			text.AddTranslation(GameCulture.Russian, "'Украденное Рожедство'");
 			AddTranslation(text);
 
 			text = CreateTranslation("Quest21");
@@ -1175,8 +1175,6 @@ namespace Antiaris
                     if ((double)checkOwnLifeForDraw > 0.0)
                         checkDrawPos = true;
                 }
-                if (checkDrawPos)
-                    scale += Main.cursorScale - 1f;
                 var x = 0;
                 var y = 0;
                 if (oneHeart > 10)
@@ -1342,7 +1340,27 @@ namespace Antiaris
 			}
 			else
 			{
-				Utils.DrawBorderString(spriteBatch, QuestItemName + ": " + CurrentItemAmount + "/" + QuestAmount[questSystem.CurrentQuest], new Vector2(barrierBackground.X - internalOffset - descSize.X / 14.2f, barrierBackground.Y - internalOffset - descSize.Y * 0.68f), Color.Gray, 1f, 0.3f, 0.4f);
+			    string name = QuestItemName + ": " + CurrentItemAmount + "/" + QuestAmount[questSystem.CurrentQuest];
+                if (QuestAmount[questSystem.CurrentQuest] == 1)
+                    name = QuestItemName;
+                int lineAmount;
+                var strArray = Utils.WordwrapString(name, Main.fontMouseText, 460, 10, out lineAmount);
+                ++lineAmount;
+                Vector2 vector2 = new Vector2(barrierBackground.X - internalOffset - descSize.X / 9.0f, barrierBackground.Y - internalOffset - descSize.Y * 0.68f);
+                var x2 = 0.0f;
+                for (var i = 0; i < lineAmount; ++i)
+                {
+                    float k = Main.fontMouseText.MeasureString(strArray[i]).X;
+                    if (x2 < (double)k)
+                        x2 = k;
+                }
+                if (x2 > 320.0f) x2 = 320.0f;
+                float screenWidth = Main.screenWidth - (width * 1.25f);
+                if (vector2.X > Main.screenWidth - (double)x2)
+                    vector2.X--;
+                if (vector2.X < Main.screenWidth - (double)x2 * 2.0)
+                    vector2.X++;
+                Utils.DrawBorderString(spriteBatch, name, vector2, Color.Gray, 1f, 0.3f, 0.4f);
 			}
 		}
 

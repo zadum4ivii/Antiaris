@@ -357,7 +357,6 @@ namespace Antiaris.NPCs.Bosses
                 ++this.buffTimeKey;
                 if (this.buffTimeKey >= 120)
                 {
-                    player.AddBuff(BuffID.Cursed, Main.expertMode ? 320 : 60, true);
                     player.AddBuff(BuffID.BrokenArmor, Main.expertMode ? 320 : 60, true);
                     player.AddBuff(BuffID.Slow, Main.expertMode ? 320 : 60, true);
                     Main.player[Main.myPlayer].statMana = 0;

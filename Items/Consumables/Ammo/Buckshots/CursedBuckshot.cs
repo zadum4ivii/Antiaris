@@ -40,7 +40,7 @@ namespace Antiaris.Items.Consumables.Ammo.Buckshots
         {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(null, "Buckshot", 50);
-            recipe.AddIngredient(ItemID.CursedFlames);
+            recipe.AddIngredient(ItemID.CursedFlame);
             recipe.SetResult(this, 50);
             recipe.AddTile(134);
             recipe.AddRecipe();

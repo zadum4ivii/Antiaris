@@ -36,7 +36,7 @@ namespace Antiaris.Items.Equipables.Armor.Mixed
         public override void UpdateEquip(Player player)
         {
             player.jumpBoost = true;
-			player.accRunSpeed = 10f;
+			player.moveSpeed += 0.1f;
         }
 		
 		public override void AddRecipes()

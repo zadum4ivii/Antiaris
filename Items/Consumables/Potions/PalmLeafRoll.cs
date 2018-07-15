@@ -78,7 +78,7 @@ namespace Antiaris.Items.Consumables.Potions
         public override void ModifyTooltips(System.Collections.Generic.List<TooltipLine> tooltips)
         {
 			string LeafRoll = Language.GetTextValue("Mods.Antiaris.LeafRoll");
-            TooltipLine Tip = new TooltipLine(mod, "Antiaris:Tooltip", LeafRoll + Uses + "/9");
+            TooltipLine Tip = new TooltipLine(mod, "Antiaris:Tooltip", LeafRoll + Uses + "/10");
             tooltips.Insert(4, Tip);
         }
 

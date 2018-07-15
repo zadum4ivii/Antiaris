@@ -34,7 +34,10 @@ namespace Antiaris.Items.Consumables.Miscellaneous
 
         public override bool UseItem(Player player)
         {
-            if (!player.GetModPlayer<QuestSystem>(mod).CompletedToday && player.GetModPlayer<QuestSystem>(mod).CurrentQuest >= 0 && player.GetModPlayer<QuestSystem>(mod).CurrentQuest != -1) player.GetModPlayer<QuestSystem>(mod).CurrentQuest += 1;
+            if (!player.GetModPlayer<QuestSystem>(mod).CompletedToday && player.GetModPlayer<QuestSystem>(mod).CurrentQuest >= 0 && player.GetModPlayer<QuestSystem>(mod).CurrentQuest != -1 && player.GetModPlayer<QuestSystem>(mod).CurrentQuest != 19)
+                player.GetModPlayer<QuestSystem>(mod).CurrentQuest += 1;
+            else if (player.GetModPlayer<QuestSystem>(mod).CurrentQuest == 19)
+                player.GetModPlayer<QuestSystem>(mod).CurrentQuest = 0;
             return true;
         }
     }

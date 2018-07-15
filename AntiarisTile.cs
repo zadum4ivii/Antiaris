@@ -156,7 +156,10 @@ namespace Antiaris
 
         public override bool CanKillTile(int i, int j, int type, ref bool blockDamaged)
         {
-            if (Main.LocalPlayer.GetModPlayer<AntiarisPlayer>(mod).mirrorZone) return false;
+            if (Main.LocalPlayer.GetModPlayer<AntiarisPlayer>(mod).mirrorZone && type != 191) 
+			{
+				return false;
+			}
             List<int> weakBlocks = new List<int>()
             {
                 TileID.Dirt,

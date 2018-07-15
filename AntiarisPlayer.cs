@@ -815,7 +815,7 @@ namespace Antiaris
 			{
 				for (var k = 0; k < 200; k++)
                 {
-                    if (Main.npc[k].lifeMax > 0 && Main.npc[k].active && Main.npc[k].boss)
+                    if (Main.npc[k].lifeMax > 0 && Main.npc[k].active && Main.npc[k].boss && Config.WeaponFails)
                     {
 						player.AddBuff(mod.BuffType("EvilPresence"), 60);
                     }

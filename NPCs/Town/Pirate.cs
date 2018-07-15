@@ -39,7 +39,7 @@ namespace Antiaris.NPCs.Town
 
         public override void SetChatButtons(ref string button, ref string button2)
         {
-            button = Language.GetTextValue("LegacyMisc.64");
+            button = Language.GetTextValue("LegacyInterface.64");
         }
 
         public override string TownNPCName()

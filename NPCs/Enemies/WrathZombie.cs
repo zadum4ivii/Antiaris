@@ -78,7 +78,7 @@ namespace Antiaris.NPCs.Enemies
                 }
                 if (Main.rand.Next(3) == 0)
                 {
-                    Item.NewItem((int)npc.position.X, (int)npc.position.Y, npc.width, npc.height, mod.ItemType("BloodDroplet"), Main.rand.Next(3, 4), false, 0, false, false);
+                    Item.NewItem((int)npc.position.X, (int)npc.position.Y, npc.width, npc.height, mod.ItemType("BloodDroplet"), Main.rand.Next(3, 5), false, 0, false, false);
                 }
                 if (Main.rand.Next(1) == 0)
                 {

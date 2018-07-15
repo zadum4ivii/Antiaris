@@ -20,7 +20,7 @@ namespace Antiaris.NPCs.Enemies
 
         public override void SetDefaults()
         {
-            npc.lifeMax = 10;
+            npc.lifeMax = 50;
             npc.damage = 29;
             npc.defense = 0;
             npc.knockBackResist = 0.0f;
@@ -45,6 +45,7 @@ namespace Antiaris.NPCs.Enemies
 
         public override void AI()
         {
+			npc.dontTakeDamage = true;
             if (this.charged) ++this.chargedTimer;
             ++this.aiTimer;
             if ((double)this.aiTimer >= 5.0) this.aiTimer = 0.0f;

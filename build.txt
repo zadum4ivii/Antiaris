@@ -1,4 +1,4 @@
-version = 0.1.0.5
+version = 0.1.0.6
 displayName = The Antiaris
 author = Zadum4ivii, Sprywisp, Gouvod, Vikri, IgnusThaum, Nokilos, CookieSam
 homepage = https://forums.terraria.org/index.php?threads/antiaris.59884/

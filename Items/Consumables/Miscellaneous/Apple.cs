@@ -14,7 +14,7 @@ namespace Antiaris.Items.Consumables.Miscellaneous
             item.maxStack = 99;
             item.rare = 0;
             item.useAnimation = 25;
-            item.useTime = 2;
+            item.useTime = 25;
             item.useStyle = 2;
             item.UseSound = SoundID.Item2;
             item.consumable = true;

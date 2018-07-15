@@ -143,8 +143,8 @@ namespace Antiaris.NPCs.Town
 
         public override void SetChatButtons(ref string button, ref string button2)
         {
-            button = Language.GetTextValue("LegacyMisc.64");
-            button = Language.GetTextValue("LegacyMisc.28");
+            button = Language.GetTextValue("LegacyInterface.64");
+            button2 = Language.GetTextValue("LegacyInterface.28");
         }
 
         public override void OnChatButtonClicked(bool firstButton, ref bool shop)
@@ -170,7 +170,7 @@ namespace Antiaris.NPCs.Town
 
         public override bool CanTownNPCSpawn(int numTownNPCs, int money)
         {
-            return AntiarisWorld.savedAdventurer || (!NPC.AnyNPCs(mod.NPCType("Adventurer")) && !NPC.AnyNPCs(mod.NPCType("BoundAdventurer")));
+            return AntiarisWorld.savedAdventurer || (!NPC.AnyNPCs(mod.NPCType("Adventurer")) && !NPC.AnyNPCs(mod.NPCType("FrozenAdventurer")));
         }
 
         public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)

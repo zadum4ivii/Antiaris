@@ -17,7 +17,7 @@ namespace Antiaris.NPCs.Miscellaneous
             npc.aiStyle = 0;
             npc.damage = 0;
             npc.defense = 99999;
-            npc.lifeMax = 5;
+            npc.lifeMax = 5000;
             npc.knockBackResist = 0f;
 			npc.noTileCollide = true;
 			animationType = 238;
@@ -33,12 +33,13 @@ namespace Antiaris.NPCs.Miscellaneous
 
         public override void AI()
         {
+            npc.dontTakeDamage = true;
 			npc.velocity.X = 0f;
 			npc.velocity.Y = -2f;
 			npc.spriteDirection = -npc.direction;
 			if (Main.player[(int)npc.ai[0]].statLife > 0)
 				++timer;
-			if ((double)timer >= 60.0)
+			if ((double)timer >= 180.0)
 			{
 				npc.life = 0;
 				npc.HitEffect(0, 10.0);

@@ -29,7 +29,7 @@ namespace Antiaris.Items.Equipables.Armor.Magic
 
         public override void UpdateEquip(Player player)
         {
-            player.accRunSpeed = 8f;
+            player.moveSpeed += 0.08f;
         }
 
         public override void AddRecipes()

@@ -54,6 +54,11 @@ namespace Antiaris
                         player.QuickSpawnItem(mod.ItemType("NokilosChestplate"));
                         player.QuickSpawnItem(mod.ItemType("NokilosGreaves"));
                         break;
+					case 3:
+                        player.QuickSpawnItem(mod.ItemType("ZerokkHat"));
+                        player.QuickSpawnItem(mod.ItemType("ZerokkChestguard"));
+                        player.QuickSpawnItem(mod.ItemType("ZerokkGreaves"));
+                        break;
                 }
             }
 			if (context == "bossBag" && arg == ItemID.GolemBossBag)

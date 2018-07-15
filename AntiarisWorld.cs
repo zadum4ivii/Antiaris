@@ -590,6 +590,14 @@ namespace Antiaris
 			{0,1,0,0,0,0,0,0,0,0,0,0,0,2,0},
         };
 
+        internal static readonly int[] SnowHouseGenTiles =
+        {
+            147,
+            161,
+            163,
+            200
+        };
+
         private int BoatPositionX = 0;
         private int BoatPositionY = 0;
         private int CheckTile = TileID.Dirt;
@@ -992,16 +1000,11 @@ namespace Antiaris
                 int y = 200;
                 while (!WorldGen.SolidOrSlopedTile(i, y + 1))
                     y++;
-                bool flag = true;
-                for (int j = 0; j < 26; j++)
-                    if (!WorldGen.SolidOrSlopedTile(i + j, y + 1) || Main.tile[i + j, y + 1].type != 147)
-                        flag = false;
-                if (flag)
-                    for (int k = 1; k < 10; k++)
-                        if (WorldGen.SolidOrSlopedTile(i - 1, y - k) || WorldGen.SolidOrSlopedTile(i + 8, y - k))
-                            flag = false;
-                    if (flag)
-                        list.Add(new Point(i, y));
+                for (int j = 0; j < 8; j++)
+                    if (WorldGen.SolidOrSlopedTile(i + j, y + 1) && (Main.tile[i + j, y + 1].type == 147 || Main.tile[i + j, y + 1].type == 161))
+                        for (int k = 1; k < 10; k++)
+                            if (!WorldGen.SolidOrSlopedTile(i - 1, y - k) && !WorldGen.SolidOrSlopedTile(i + 8, y - k))
+                                list.Add(new Point(i, y));
             }
             if (list.Count > 0)
             {
@@ -1093,7 +1096,7 @@ namespace Antiaris
 			WorldGen.PlaceObject(SnowHousePositionX + 18, SnowHousePositionY - 8, 50, true);
 			WorldGen.PlaceObject(SnowHousePositionX + 19, SnowHousePositionY - 8, 78, true);
 			WorldGen.PlaceObject(SnowHousePositionX + 25, SnowHousePositionY - 5, TileID.Chairs, true, 30, 1);
-			WorldGen.PlaceObject(SnowHousePositionX + 23, SnowHousePositionY - 8, 246, true, 3);
+			WorldGen.PlaceObject(SnowHousePositionX + 23, SnowHousePositionY - 7, ModLoader.GetMod("Antiaris").TileType("BrothersPenguins"));
 			WorldGen.PlaceObject(SnowHousePositionX + 19, SnowHousePositionY - 5, ModLoader.GetMod("Antiaris").TileType("SnowSofa"));
 			WorldGen.PlaceObject(SnowHousePositionX + 13, SnowHousePositionY - 5, ModLoader.GetMod("Antiaris").TileType("SnowWorkBench"));
 			WorldGen.PlaceObject(SnowHousePositionX + 23, SnowHousePositionY - 5, ModLoader.GetMod("Antiaris").TileType("SnowFireplace"));
@@ -1889,7 +1892,7 @@ namespace Antiaris
                 while (!WorldGen.SolidOrSlopedTile(i, y + 1))
                     y++;
                 bool flag = true;
-                for (int j = 0; j < 10; j++)
+                for (int j = 0; j < 8; j++)
                     if (!WorldGen.SolidOrSlopedTile(i + j, y + 1) || Main.tile[i + j, y + 1].type != (ushort)(!WorldGen.crimson ? 23 : 199))
                         flag = false;
                 if (flag)
@@ -1968,6 +1971,11 @@ namespace Antiaris
 					WorldGen.PlaceObject(TowerPositionX + 7, TowerPositionY - 3, 101, true, (ushort)(!WorldGen.crimson ? 7 : 19));
 					WorldGen.PlaceObject(TowerPositionX + 6, TowerPositionY - 10, 79, true, (ushort)(!WorldGen.crimson ? 1 : 4), -1, 1);
 					WorldGen.PlaceChest(TowerPositionX + 9, TowerPositionY - 18, 21, false, (ushort)(!WorldGen.crimson ? 7 : 14));
+                    var TowerChestIndex = Chest.FindChest(TowerPositionX + 9, TowerPositionY - 19);
+                    if (TowerChestIndex != -1)
+                    {
+                        do_TowerChestLoot(Main.chest[TowerChestIndex].item);
+                    }
                 }
             }
 			if (progress == null)
@@ -2232,6 +2240,20 @@ namespace Antiaris
                 chest.item[i].SetDefaults(ItemID.GoldCoin);
                 i++;
             }
+        }
+
+        void do_TowerChestLoot(Item[] ChestInventory)
+        {
+            ChestInventory[0].SetDefaults(!WorldGen.crimson ? ItemID.DemoniteBar : ItemID.CrimtaneBar); 
+            ChestInventory[0].stack = Main.rand.Next(5, 7);
+            ChestInventory[1].SetDefaults(ItemID.GoldCoin);
+            ChestInventory[1].stack = Main.rand.Next(3, 4);
+            ChestInventory[2].SetDefaults(ItemID.LesserHealingPotion);
+            ChestInventory[2].stack = Main.rand.Next(6, 10);
+            ChestInventory[3].SetDefaults(ItemID.RecallPotion);
+            ChestInventory[3].stack = Main.rand.Next(2, 4);
+            ChestInventory[4].SetDefaults(ItemID.Rope);
+            ChestInventory[4].stack = Main.rand.Next(30, 40);
         }
     }
 }

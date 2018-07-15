@@ -50,9 +50,9 @@ namespace Antiaris.Tiles
                 case 4:
                 item = "WrathZombieBanner";
                 break;		
-                //case 5:
-                //item = "";
-                //break;	
+                case 5:
+                item = "BabyCreeperBanner";
+                break;	
 				case 6:
                 item = "RobberBanner";
                 break;	
@@ -125,9 +125,9 @@ namespace Antiaris.Tiles
                     case 4:
                     type = "WrathZombie";
                     break;	
-					//case 5:
-                    //type = "";
-                    //break;	
+					case 5:
+                    type = "BabyCreeper";
+                    break;	
 					case 6:
                     type = "Robber";
                     break;	

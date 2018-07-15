@@ -111,8 +111,16 @@ namespace Antiaris.NPCs.Town
         public void WakeUp()
         {
             npc.dontTakeDamage = false;
-			AntiarisWorld.savedAdventurer = true;
-            npc.Transform(mod.NPCType("Adventurer"));
+            AntiarisWorld.savedAdventurer = true;
+            if (Main.netMode == NetmodeID.SinglePlayer)
+                npc.Transform(mod.NPCType("Adventurer"));
+            else
+            {
+                ModPacket packet = mod.GetPacket();
+                packet.Write((byte)2);
+                packet.Write(npc.whoAmI);
+                packet.Send();
+            }
         }
 
         public override string GetChat()

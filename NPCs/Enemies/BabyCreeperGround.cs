@@ -28,6 +28,8 @@ namespace Antiaris.NPCs.Enemies
             npc.value = Item.buyPrice(0, 0, 1, 15);
             animationType = 1;
             npc.rarity = 1;
+            banner = npc.type;
+            bannerItem = mod.ItemType("BabyCreeperBanner");
         }
 
         public override void SetStaticDefaults()
