@@ -11,12 +11,6 @@ namespace Antiaris.NPCs.Town
     [AutoloadHead]
     public class Adventurer : ModNPC
     {
-        //int ChangeState = 0;
-
-        string NoQuest1 = Language.GetTextValue("Mods.Antiaris.NoQuest1");
-        string NoQuest2 = Language.GetTextValue("Mods.Antiaris.NoQuest2");
-        string NoQuest3 = Language.GetTextValue("Mods.Antiaris.NoQuest3");
-
         public override string Texture
         {
             get
@@ -269,6 +263,51 @@ namespace Antiaris.NPCs.Town
 
         void DoThing()
         {
+			string Name1 = Language.GetTextValue("Mods.Antiaris.Name1");
+			string Name10 = Language.GetTextValue("Mods.Antiaris.Name10");
+			string Name11 = Language.GetTextValue("Mods.Antiaris.Name11");
+			string Name12 = Language.GetTextValue("Mods.Antiaris.Name12");
+			string Name13 = Language.GetTextValue("Mods.Antiaris.Name13");
+			string Name14 = Language.GetTextValue("Mods.Antiaris.Name14");
+			string Name15 = Language.GetTextValue("Mods.Antiaris.Name15");
+			string Name16 = Language.GetTextValue("Mods.Antiaris.Name16");
+			string Name17 = Language.GetTextValue("Mods.Antiaris.Name17");
+			string Name18 = Language.GetTextValue("Mods.Antiaris.Name18");
+			string Name19 = Language.GetTextValue("Mods.Antiaris.Name19");
+			string Name2 = Language.GetTextValue("Mods.Antiaris.Name2");
+			string Name20 = Language.GetTextValue("Mods.Antiaris.Name20");
+			string Name21 = Language.GetTextValue("Mods.Antiaris.Name21");
+			string Name3 = Language.GetTextValue("Mods.Antiaris.Name3");
+			string Name4 = Language.GetTextValue("Mods.Antiaris.Name4");
+			string Name5 = Language.GetTextValue("Mods.Antiaris.Name5");
+			string Name6 = Language.GetTextValue("Mods.Antiaris.Name6");
+			string Name7 = Language.GetTextValue("Mods.Antiaris.Name7");
+			string Name8 = Language.GetTextValue("Mods.Antiaris.Name8");
+			string Name9 = Language.GetTextValue("Mods.Antiaris.Name9");
+			string Quest1 = Language.GetTextValue("Mods.Antiaris.Quest1");
+			string Quest10 = Language.GetTextValue("Mods.Antiaris.Quest10");
+			string Quest11 = Language.GetTextValue("Mods.Antiaris.Quest11");
+			string Quest12 = Language.GetTextValue("Mods.Antiaris.Quest12");
+			string Quest13 = Language.GetTextValue("Mods.Antiaris.Quest13");
+			string Quest14 = Language.GetTextValue("Mods.Antiaris.Quest14");
+			string Quest15 = Language.GetTextValue("Mods.Antiaris.Quest15");
+			string Quest16 = Language.GetTextValue("Mods.Antiaris.Quest16");
+			string Quest17 = Language.GetTextValue("Mods.Antiaris.Quest17");
+			string Quest18 = Language.GetTextValue("Mods.Antiaris.Quest18");
+			string Quest19 = Language.GetTextValue("Mods.Antiaris.Quest19");
+			string Quest2 = Language.GetTextValue("Mods.Antiaris.Quest2");
+			string Quest20 = Language.GetTextValue("Mods.Antiaris.Quest20");
+			string Quest21 = Language.GetTextValue("Mods.Antiaris.Quest21");
+			string Quest3 = Language.GetTextValue("Mods.Antiaris.Quest3");
+			string Quest4 = Language.GetTextValue("Mods.Antiaris.Quest4");
+			string Quest5 = Language.GetTextValue("Mods.Antiaris.Quest5");
+			string Quest6 = Language.GetTextValue("Mods.Antiaris.Quest6");
+			string Quest7 = Language.GetTextValue("Mods.Antiaris.Quest7");
+			string Quest8 = Language.GetTextValue("Mods.Antiaris.Quest8");
+			string Quest9 = Language.GetTextValue("Mods.Antiaris.Quest9");
+			string NoQuest1 = Language.GetTextValue("Mods.Antiaris.NoQuest1");
+			string NoQuest2 = Language.GetTextValue("Mods.Antiaris.NoQuest2");
+			string NoQuest3 = Language.GetTextValue("Mods.Antiaris.NoQuest3");
             foreach (Player player in Main.player)
             {
                 if (player.active && player.talkNPC == npc.whoAmI)

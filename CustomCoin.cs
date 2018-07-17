@@ -19,7 +19,7 @@ namespace Antiaris
                     color.R,
                     color.G,
                     color.B,
-                    Language.GetTextValue("LegacyMisc.50"),
+                    Language.GetTextValue("LegacyTooltip.50"),
                     price,
                     IronCoin
                 });

@@ -1,11 +1,11 @@
-﻿	using System;
-	using System.Collections.Generic;
-	using Terraria;
-	using Terraria.ID;
-	using Terraria.Localization;
-	using Terraria.ModLoader;
-	using Terraria.ModLoader.IO;
-	using Terraria.Utilities;
+﻿using System;
+using System.Collections.Generic;
+using Terraria;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
+using Terraria.Utilities;
 
 namespace Antiaris.NPCs.Town
 {
@@ -15,56 +15,55 @@ namespace Antiaris.NPCs.Town
 	    public bool CompletedToday = false;
 	    public int CompletedTotal = 0;
 	    public int CurrentQuest = -1;
-
-	    string Name1 = Language.GetTextValue("Mods.Antiaris.Name1");
-	    string Name10 = Language.GetTextValue("Mods.Antiaris.Name10");
-	    string Name11 = Language.GetTextValue("Mods.Antiaris.Name11");
-	    string Name12 = Language.GetTextValue("Mods.Antiaris.Name12");
-	    string Name13 = Language.GetTextValue("Mods.Antiaris.Name13");
-	    string Name14 = Language.GetTextValue("Mods.Antiaris.Name14");
-	    string Name15 = Language.GetTextValue("Mods.Antiaris.Name15");
-	    string Name16 = Language.GetTextValue("Mods.Antiaris.Name16");
-	    string Name17 = Language.GetTextValue("Mods.Antiaris.Name17");
-	    string Name18 = Language.GetTextValue("Mods.Antiaris.Name18");
-	    string Name19 = Language.GetTextValue("Mods.Antiaris.Name19");
-	    string Name2 = Language.GetTextValue("Mods.Antiaris.Name2");
-	    string Name20 = Language.GetTextValue("Mods.Antiaris.Name20");
-	    string Name21 = Language.GetTextValue("Mods.Antiaris.Name21");
-	    string Name3 = Language.GetTextValue("Mods.Antiaris.Name3");
-	    string Name4 = Language.GetTextValue("Mods.Antiaris.Name4");
-	    string Name5 = Language.GetTextValue("Mods.Antiaris.Name5");
-	    string Name6 = Language.GetTextValue("Mods.Antiaris.Name6");
-	    string Name7 = Language.GetTextValue("Mods.Antiaris.Name7");
-	    string Name8 = Language.GetTextValue("Mods.Antiaris.Name8");
-	    string Name9 = Language.GetTextValue("Mods.Antiaris.Name9");
-	    public bool PirateQuest = true;
-	    string Quest1 = Language.GetTextValue("Mods.Antiaris.Quest1");
-	    string Quest10 = Language.GetTextValue("Mods.Antiaris.Quest10");
-	    string Quest11 = Language.GetTextValue("Mods.Antiaris.Quest11");
-	    string Quest12 = Language.GetTextValue("Mods.Antiaris.Quest12");
-	    string Quest13 = Language.GetTextValue("Mods.Antiaris.Quest13");
-	    string Quest14 = Language.GetTextValue("Mods.Antiaris.Quest14");
-	    string Quest15 = Language.GetTextValue("Mods.Antiaris.Quest15");
-	    string Quest16 = Language.GetTextValue("Mods.Antiaris.Quest16");
-	    string Quest17 = Language.GetTextValue("Mods.Antiaris.Quest17");
-	    string Quest18 = Language.GetTextValue("Mods.Antiaris.Quest18");
-	    string Quest19 = Language.GetTextValue("Mods.Antiaris.Quest19");
-	    string Quest2 = Language.GetTextValue("Mods.Antiaris.Quest2");
-	    string Quest20 = Language.GetTextValue("Mods.Antiaris.Quest20");
-	    string Quest21 = Language.GetTextValue("Mods.Antiaris.Quest21");
-	    string Quest3 = Language.GetTextValue("Mods.Antiaris.Quest3");
-	    string Quest4 = Language.GetTextValue("Mods.Antiaris.Quest4");
-	    string Quest5 = Language.GetTextValue("Mods.Antiaris.Quest5");
-	    string Quest6 = Language.GetTextValue("Mods.Antiaris.Quest6");
-	    string Quest7 = Language.GetTextValue("Mods.Antiaris.Quest7");
-	    string Quest8 = Language.GetTextValue("Mods.Antiaris.Quest8");
-	    string Quest9 = Language.GetTextValue("Mods.Antiaris.Quest9");
 	    public int QuestKills = 0;
+	    public bool PirateQuest = true;
 
-	    public override void Initialize()
+        public override void Initialize()
 		{
             try
             {
+				string Name1 = Language.GetTextValue("Mods.Antiaris.Name1");
+				string Name10 = Language.GetTextValue("Mods.Antiaris.Name10");
+				string Name11 = Language.GetTextValue("Mods.Antiaris.Name11");
+				string Name12 = Language.GetTextValue("Mods.Antiaris.Name12");
+				string Name13 = Language.GetTextValue("Mods.Antiaris.Name13");
+				string Name14 = Language.GetTextValue("Mods.Antiaris.Name14");
+				string Name15 = Language.GetTextValue("Mods.Antiaris.Name15");
+				string Name16 = Language.GetTextValue("Mods.Antiaris.Name16");
+				string Name17 = Language.GetTextValue("Mods.Antiaris.Name17");
+				string Name18 = Language.GetTextValue("Mods.Antiaris.Name18");
+				string Name19 = Language.GetTextValue("Mods.Antiaris.Name19");
+				string Name2 = Language.GetTextValue("Mods.Antiaris.Name2");
+				string Name20 = Language.GetTextValue("Mods.Antiaris.Name20");
+				string Name21 = Language.GetTextValue("Mods.Antiaris.Name21");
+				string Name3 = Language.GetTextValue("Mods.Antiaris.Name3");
+				string Name4 = Language.GetTextValue("Mods.Antiaris.Name4");
+				string Name5 = Language.GetTextValue("Mods.Antiaris.Name5");
+				string Name6 = Language.GetTextValue("Mods.Antiaris.Name6");
+				string Name7 = Language.GetTextValue("Mods.Antiaris.Name7");
+				string Name8 = Language.GetTextValue("Mods.Antiaris.Name8");
+				string Name9 = Language.GetTextValue("Mods.Antiaris.Name9");
+				string Quest1 = Language.GetTextValue("Mods.Antiaris.Quest1");
+				string Quest10 = Language.GetTextValue("Mods.Antiaris.Quest10");
+				string Quest11 = Language.GetTextValue("Mods.Antiaris.Quest11");
+				string Quest12 = Language.GetTextValue("Mods.Antiaris.Quest12");
+				string Quest13 = Language.GetTextValue("Mods.Antiaris.Quest13");
+				string Quest14 = Language.GetTextValue("Mods.Antiaris.Quest14");
+				string Quest15 = Language.GetTextValue("Mods.Antiaris.Quest15");
+				string Quest16 = Language.GetTextValue("Mods.Antiaris.Quest16");
+				string Quest17 = Language.GetTextValue("Mods.Antiaris.Quest17");
+				string Quest18 = Language.GetTextValue("Mods.Antiaris.Quest18");
+				string Quest19 = Language.GetTextValue("Mods.Antiaris.Quest19");
+				string Quest2 = Language.GetTextValue("Mods.Antiaris.Quest2");
+				string Quest20 = Language.GetTextValue("Mods.Antiaris.Quest20");
+				string Quest21 = Language.GetTextValue("Mods.Antiaris.Quest21");
+				string Quest3 = Language.GetTextValue("Mods.Antiaris.Quest3");
+				string Quest4 = Language.GetTextValue("Mods.Antiaris.Quest4");
+				string Quest5 = Language.GetTextValue("Mods.Antiaris.Quest5");
+				string Quest6 = Language.GetTextValue("Mods.Antiaris.Quest6");
+				string Quest7 = Language.GetTextValue("Mods.Antiaris.Quest7");
+				string Quest8 = Language.GetTextValue("Mods.Antiaris.Quest8");
+				string Quest9 = Language.GetTextValue("Mods.Antiaris.Quest9");
                 Quests.Clear();
                 Quests.Add(new ItemQuest(Name1 + "\n\n" + Quest1, mod.ItemType("OldCompass")));
                 Quests.Add(new ItemQuest(Name2 + "\n\n" + Quest2, mod.ItemType("GlacialCrystal")));
@@ -83,7 +82,7 @@ namespace Antiaris.NPCs.Town
 
                 int[] slimes = { 1, 16, 59, 71, 81, 138, 147, 183, 184, 204, 225, 244, 302, 333, 334, 335, 336, 535, 537 };
                 Quest quest2 = new KillQuest(Name9 + "\n\n" + Quest9, slimes, 25, 1d);
-                quest.Reward = "Bonebardier";
+                quest2.Reward = "EmeraldNet";
                 //quest2.SpawnReward = npc => Item.NewItem(npc.position, npc.Size, mod.ItemType("EmeraldNet"), 1, false, 0, false, false);
                 Quests.Add(quest2);
 
@@ -165,13 +164,10 @@ namespace Antiaris.NPCs.Town
                 number = Item.NewItem((int)npc.position.X, (int)npc.position.Y, npc.width, npc.height, mod.ItemType("AdventurerLootBox"), 1, false, 0, false, false);
                 if (Main.netMode == 1 && number >= 0)
                     NetMessage.SendData(21, -1, -1, (NetworkText)null, number, 1f, 0.0f, 0.0f, 0, 0, 0);
-                if (GetCurrentQuest().Reward != null)
-                {
-                    int number2 = 0;
-                    number2 = Item.NewItem((int)npc.position.X, (int)npc.position.Y, npc.width, npc.height, mod.ItemType(GetCurrentQuest().Reward), 1, false, 0, false, false);
-                    if (Main.netMode == 1 && number2 >= 0)
-                        NetMessage.SendData(21, -1, -1, (NetworkText)null, number2, 1f, 0.0f, 0.0f, 0, 0, 0);
-                }
+                int number2 = 0;
+                number2 = Item.NewItem((int)npc.position.X, (int)npc.position.Y, npc.width, npc.height, mod.ItemType(GetCurrentQuest().Reward), 1, false, 0, false, false);
+                if (Main.netMode == 1 && number2 >= 0)
+                    NetMessage.SendData(21, -1, -1, (NetworkText)null, number2, 1f, 0.0f, 0.0f, 0, 0, 0);
                 //GetCurrentQuest().SpawnReward(npc);
             }
             catch (Exception exception)

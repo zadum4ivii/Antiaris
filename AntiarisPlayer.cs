@@ -1292,7 +1292,7 @@ namespace Antiaris
 					}
 				}
 			}
-            if (player.inventory[player.selectedItem].useAmmo == mod.ItemType("GreenGoo") && (player.inventory[player.selectedItem].type == mod.ItemType("GoldHuntingBlunderbuss") || player.inventory[player.selectedItem].type == mod.ItemType("PlatinumHuntingBlunderbuss")))
+            if (player.inventory[player.selectedItem].useAmmo == mod.ItemType("Buckshot") && (player.inventory[player.selectedItem].type == mod.ItemType("GoldHuntingBlunderbuss") || player.inventory[player.selectedItem].type == mod.ItemType("PlatinumHuntingBlunderbuss")))
             {
                 player.scope = true;
             }

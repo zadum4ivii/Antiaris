@@ -26,7 +26,10 @@ namespace Antiaris.Tiles.Miscellaneous
 
         public override void KillMultiTile(int i, int j, int frameX, int frameY)
         {
-            Item.NewItem(i * 16, j * 16, 32, 16, mod.ItemType("SteelShovel"), 1, false, 0, false, false);
+            int drop = 0;
+            drop = Item.NewItem(i * 16, j * 16, 32, 16, mod.ItemType("SteelShovel"), 1, false, 0, false, false);
+            if (Main.netMode == 1 && drop >= 0)
+                NetMessage.SendData(21, -1, -1, (NetworkText)null, drop, 1f, 0.0f, 0.0f, 0, 0, 0);
         }
 
         public override void MouseOver(int i, int j)
@@ -39,7 +42,7 @@ namespace Antiaris.Tiles.Miscellaneous
 
         public override void RightClick(int x, int y)
 		{
-			WorldGen.KillTile(x, y, false, false, false);
-		}
+	        WorldGen.KillTile(x, y, false, false, false);
+        }
     }
 }

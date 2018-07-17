@@ -59,7 +59,7 @@ namespace Antiaris
 			electrified = false;
 			lRage = false;
 			deceleration = false;
-		}
+		} 
 
         public override void UpdateLifeRegen(NPC npc, ref int damage)
 		{
@@ -262,8 +262,10 @@ namespace Antiaris
             }
         }
 
+        public bool NoDamage;
         public override void SetDefaults(NPC npc)
-		{
+        {
+            NoDamage = npc.dontTakeDamage;
 			if(!AntiarisWorld.frozenTime)
 			    this.NpcFrame = npc.frame;
 			else
@@ -272,7 +274,7 @@ namespace Antiaris
 
         public override bool PreAI(NPC npc)
 		{
-			if(AntiarisWorld.frozenTime)
+            if (AntiarisWorld.frozenTime)
 			{
 				npc.position.X = npc.oldPosition.X;
 				npc.position.Y = npc.oldPosition.Y;
@@ -284,7 +286,8 @@ namespace Antiaris
 				
 			else
 			{
-				npc.dontTakeDamage = false;
+                if(!NoDamage)
+			    	npc.dontTakeDamage = false;
 				return true;
 			}
 			return base.PreAI(npc);
