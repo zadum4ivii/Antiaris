@@ -1,4 +1,4 @@
-using Terraria;
+п»їusing Terraria;
 using Terraria.ModLoader;
 using Terraria.Localization;
 
@@ -19,10 +19,10 @@ namespace Antiaris.Items.Equipables.Armor.Developers
         {
             DisplayName.SetDefault("Zerokk's Chestguard");
             Tooltip.SetDefault("'Great for impersonating former developers!'");
-            DisplayName.AddTranslation(GameCulture.Russian, "Нагрудник Zerokk'a");
-            Tooltip.AddTranslation(GameCulture.Russian, "'Поможет вам выдать себя за бывшего разработчика!'");
-			DisplayName.AddTranslation(GameCulture.Chinese, "Zerokk???");
-            Tooltip.AddTranslation(GameCulture.Chinese, "“???????????!”");
+            DisplayName.AddTranslation(GameCulture.Russian, "РќР°РіСЂСѓРґРЅРёРє Zerokk'a");
+            Tooltip.AddTranslation(GameCulture.Russian, "'РџРѕРјРѕР¶РµС‚ РІР°Рј РІС‹РґР°С‚СЊ СЃРµР±СЏ Р·Р° Р±С‹РІС€РµРіРѕ СЂР°Р·СЂР°Р±РѕС‚С‡РёРєР°!'");
+			DisplayName.AddTranslation(GameCulture.Chinese, "Zerokkзљ„еёЅе­ђ");
+            Tooltip.AddTranslation(GameCulture.Chinese, "вЂњйќћеёёйЂ‚еђ€е†’е……е‰Ќд»»ејЂеЏ‘иЂ…пјЃвЂќ");
         }
     }
 }

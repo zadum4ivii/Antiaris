@@ -1,6 +1,6 @@
-version = 0.1.0.7
+version = 0.1.0.8
 displayName = The Antiaris
-author = Zadum4ivii, ITSFBI, Sprywisp, Gouvod, Vikri, IgnusThaum, Nokilos, CookieSam
+author = Zadum4ivii, ITSFBI, Sprywisp, Gouvod, Vikri, Nokilos, CookieSam
 homepage = https://forums.terraria.org/index.php?threads/antiaris.59884/
 hideCode = true
 hideResources = true

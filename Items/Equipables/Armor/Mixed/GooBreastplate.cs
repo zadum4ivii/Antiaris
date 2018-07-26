@@ -26,30 +26,19 @@ namespace Antiaris.Items.Equipables.Armor.Mixed
             DisplayName.AddTranslation(GameCulture.Russian, "Нагрудник из слизи");
             Tooltip.AddTranslation(GameCulture.Russian, "Увеличивает шанс критического удара на 5%");
         }
-		
-		public override void DrawArmorColor(Player drawPlayer, float shadow, ref Color color, ref int glowMask, ref Color glowMaskColor)
+
+        public override void DrawArmorColor(Player drawPlayer, float shadow, ref Color color, ref int glowMask, ref Color glowMaskColor)
         {
-			var player = Main.player[Main.myPlayer];
-			if (Main.myPlayer == item.owner)
-			{
-				if (player.Male)
-				{
-					glowMask = AntiarisGlowMasks.GooBreastplate;
-				}
-				else
-				{
-					glowMask = AntiarisGlowMasks.GooBreastplateF;
-				}
-			}
+            glowMask = drawPlayer.Male ? AntiarisGlowMasks.GooBreastplate : AntiarisGlowMasks.GooBreastplateF;
             glowMaskColor = Color.White;
         }
 
         public override void UpdateEquip(Player player)
         {
-				player.meleeCrit += 5;
-				player.magicCrit += 5;
-				player.rangedCrit += 5;
-				player.thrownCrit += 5;   
+            player.meleeCrit += 5;
+            player.magicCrit += 5;
+            player.rangedCrit += 5;
+            player.thrownCrit += 5;
         }
 		
 		public override void AddRecipes()

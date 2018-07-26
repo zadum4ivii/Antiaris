@@ -22,7 +22,8 @@ namespace Antiaris.Tiles.Decorations
 			Main.tileValue[Type] = 500;
 			Main.tileTable[Type] = true;
             Main.tileSolidTop[Type] = true;
-			TileID.Sets.HasOutlines[Type] = true;
+		    AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTable);
+            TileID.Sets.HasOutlines[Type] = true;
 			TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
 			TileObjectData.newTile.Origin = new Point16(0, 1);
 			TileObjectData.newTile.CoordinateHeights = new int[] { 16, 18 };
@@ -34,7 +35,7 @@ namespace Antiaris.Tiles.Decorations
 			TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
 			TileObjectData.addTile(Type);
 			ModTranslation name = CreateMapEntryName();
-			name.SetDefault("Shadewood Cabinet");
+            name.SetDefault("Shadewood Cabinet");
             name.AddTranslation(GameCulture.Russian, "Шкаф из теневой древесины");
             name.AddTranslation(GameCulture.Chinese, "暗影木柜橱");
             AddMapEntry(new Color(191, 142, 111), name);

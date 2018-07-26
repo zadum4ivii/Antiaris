@@ -39,7 +39,7 @@ namespace Antiaris.Items.Equipables.Accessories
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             if (this.timer > 0.0f) this.timer--;
-            if (player.statMana < player.statManaMax2 * 0.3f && (double)this.timer <= 0.0)
+            if ((player.statMana < player.statManaMax2 * 0.3f) && (double)this.timer <= 0.0)
             {
                 float x = player.position.X + (float)Main.rand.Next(-600, 450);
                 float y = player.position.Y - (float)Main.rand.Next(750, 1000);
@@ -60,7 +60,6 @@ namespace Antiaris.Items.Equipables.Accessories
             recipe.AddIngredient(ItemID.WizardHat);
 			recipe.AddIngredient(ItemID.StarCloak);
             recipe.AddIngredient(ItemID.ManaCrystal, 3);
-            recipe.AddIngredient(ItemID.ManaCrystal);
             recipe.AddIngredient(ItemID.SoulofNight, 5);
             recipe.SetResult(this);
             recipe.AddTile(TileID.Anvils);

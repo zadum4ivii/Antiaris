@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using Antiaris.NPCs.Town;
 using Antiaris.VEffects;
 using Microsoft.Xna.Framework;
@@ -12,6 +13,7 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Antiaris.UIs;
 using Terraria.UI;
 
 namespace Antiaris
@@ -19,14 +21,22 @@ namespace Antiaris
     public class Antiaris : Mod
     {
         public static Mod Thorium;
+		public static Mod kRPG;
+		public static Mod RockosARPG;
+		public static Mod TerrariaOverhaul;
+        public static Texture2D cQuestTexture;
         public static Mod Instance;
         public static int coin;
         public static ModHotKey adventurerKey;
         public static ModHotKey hideTracker;
+        internal QuestTrackerUI questTracker;
+        private UserInterface questInterface;
+        internal CurrentQuestUI cQuestUI;
+        private UserInterface questLog;
+        public static Texture2D trackerTexture;
         public static ModHotKey stand;
 
         private static float lifePerHeart = 20f;
-        private static int startX = Main.screenWidth - 800;
         private Color rb = new Color(Main.DiscoR, Main.DiscoG, Main.DiscoB);
 
         public bool Tracker = true;
@@ -86,6 +96,9 @@ namespace Antiaris
         public override void PostSetupContent()
         {
 			Thorium = ModLoader.GetMod("ThoriumMod");
+			kRPG = ModLoader.GetMod("kRPG");
+			RockosARPG = ModLoader.GetMod("RockosARPG");
+            TerrariaOverhaul = ModLoader.GetMod("TerrariaOverhaul");
             var bossChecklist = ModLoader.GetMod("BossChecklist");
             if (bossChecklist != null)
             {
@@ -110,6 +123,23 @@ namespace Antiaris
 
         public override void Load()
         {
+            ///UI codo
+            #region Load UI
+            cQuestTexture = ModLoader.GetTexture("Antiaris/Miscellaneous/NoteBackground");
+            trackerTexture = ModLoader.GetTexture("Antiaris/Miscellaneous/QuestTracker");
+            if (!Main.dedServ)
+            {
+                questTracker = new QuestTrackerUI();
+                questTracker.Activate();
+                questInterface = new UserInterface();
+                questInterface.SetState(questTracker);
+
+                cQuestUI = new CurrentQuestUI();
+                cQuestUI.Activate();
+                questLog = new UserInterface();
+                questLog.SetState(cQuestUI);
+            }
+            #endregion
             ModExplorer._initialize();
             AntiarisGlowMasks.Load();
             adventurerKey = RegisterHotKey("Special Ability", "L");
@@ -139,28 +169,29 @@ namespace Antiaris
 				}
 				
             }
-			ModTranslation text = CreateTranslation("UnconsciousGuide");
+            #region Translations
+            ModTranslation text = CreateTranslation("UnconsciousGuide");
             text.SetDefault("Ugh... My head hurts so much... Oh, hello, {0}! Someone bursted into my house and pretty much destroyed it... If you could repair it I'd live in it again! You should look into my chest, it has some things that can help you with progression. By the way, if you need some help, just talk to me!");
             text.AddTranslation(GameCulture.Chinese, "呃啊…我的头…哦，哈喽，{0}!之前有人来到这里洗劫了我的家，还把它给烧毁了...你能不能修复它？求你了，否则我将无家可归...你可以翻一下我家里的箱子，也许有对你有用的东西。顺带一提，有问题尽管找我！");
             text.AddTranslation(GameCulture.Russian, "Угх... Моя голова так болит... Оу, здравствуй, {0}! Кто-то ворвался в мой дом и почти разрушил его... Если бы ты смог его починить, я бы мог там снова жить! В моем сундуке есть немного вещей, которые помогут тебе с продвижением. Кстати, если тебе нужна помощь, просто поговори со мной!");
             AddTranslation(text);
 			
             text = CreateTranslation("EnchantedSetBonus");
-            text.SetDefault("17% reduced mana usage\nIncreases maximum mana by 20\nHitting an enemy may cause a dagger to pierce them\n5% reduced spell fail chance");
+            text.SetDefault("17% reduced mana usage\nIncreases maximum mana by 20\nHitting an enemy may cause a dagger to pierce them");
             text.AddTranslation(GameCulture.Chinese, "1、减少 17% 的魔力消耗\n2、魔力最大值增加 20\n3、攻击敌人可能会有光之刃为你刺杀它们");
-            text.AddTranslation(GameCulture.Russian, "Снижает использование маны на 17%\nУвеличивает максимальное количество маны на 20\nПри ударе по врагу может появиться клинок, который пронзит его\nНа 5% снижает вероятность неудачного произнесения заклинания");
+            text.AddTranslation(GameCulture.Russian, "Снижает использование маны на 17%\nУвеличивает максимальное количество маны на 20\nПри ударе по врагу может появиться клинок, который пронзит его");
 			AddTranslation(text);
 
             text = CreateTranslation("DiscipleSetBonus");
-            text.SetDefault("Increases maximum mana by 20\n3% reduced spell fail chance\nEach third damage dealt creates a magical energy that restores mana");
-            text.AddTranslation(GameCulture.Chinese, "1、增加 20 点魔力最大值\n2、减少 3% 咒语失效概率\n3、每第三次施予攻击将召唤能够恢复魔力的魔法能量");
-            text.AddTranslation(GameCulture.Russian, "Увеличивает максимальное количество маны на 20\nСнижает шанс неудачного произнесения заклинания на 3%\nКаждое третье попадание создаст магическую энергию, восстанавливающую ману");
+            text.SetDefault("Increases maximum mana by 20\nEach third damage dealt creates a magical energy that restores mana");
+            text.AddTranslation(GameCulture.Chinese, "1、增加 20 点魔力最大值\n2、每第三次施予攻击将召唤能够恢复魔力的魔法能量");
+            text.AddTranslation(GameCulture.Russian, "Увеличивает максимальное количество маны на 20\nКаждое третье попадание создаст магическую энергию, восстанавливающую ману");
             AddTranslation(text);
             
             text = CreateTranslation("SorcererSetBonus");
-            text.SetDefault("Increases maximum mana by 30\n10% reduced mana usage\n5% reduced spell fail chance\nWhen the player is moving, he receives mana every 2 seconds");
-            text.AddTranslation(GameCulture.Chinese, "1、增加 30 点魔力最大值\n2、减少 10% 魔力消耗\n3、减少 5% 咒语失效概率\n4、当玩家移动时，每 2 秒将接收魔力");
-            text.AddTranslation(GameCulture.Russian, "Увеличивает максимальное количество маны на 30\nСнижает использование маны на 10%\nСнижает шанс неудачного произнесения заклинания на 5%\nКогда игрок двигается, он восстанавливает ману каждые 2 секунды");
+            text.SetDefault("Increases maximum mana by 30\n10% reduced mana usage\nWhen the player is moving, he receives mana every 2 seconds");
+            text.AddTranslation(GameCulture.Chinese, "1、增加 30 点魔力最大值\n2、减少 10% 魔力消耗\\n3、当玩家移动时，每 2 秒将接收魔力");
+            text.AddTranslation(GameCulture.Russian, "Увеличивает максимальное количество маны на 30\nСнижает использование маны на 10%\nКогда игрок двигается, он восстанавливает ману каждые 2 секунды");
             AddTranslation(text);
 			
 			text = CreateTranslation("GooSetBonus");
@@ -218,9 +249,9 @@ namespace Antiaris
 			AddTranslation(text);
 
             text = CreateTranslation("FrozenAdventurer1");
-            text.SetDefault("Looks like this man was snowed in. He's unconscious but he can be helped by digging him out. A shovel would be useful...");
-            text.AddTranslation(GameCulture.Chinese, "看起来这个人被雪冻住了，他没有意识，但是可以通过挖掘来救他。铁锹应该有用...");
-            text.AddTranslation(GameCulture.Russian, "Похоже, что этого человека завалило снегом. Он без сознания, но ему можно помочь, выкопав его. Лопата бы тут пригодилась...");
+            text.SetDefault("Looks like this man was snowed in. He's unconscious but he can be helped by digging him out. A shovel I've seen near the door would be useful...");
+            text.AddTranslation(GameCulture.Chinese, "看来这个人被雪埋住并昏迷了，但是仍然可以铲掉他身上的雪救他，门旁边的铁锹也许有点用处...");
+            text.AddTranslation(GameCulture.Russian, "Похоже, что этого человека завалило снегом. Он без сознания, но ему можно помочь, выкопав его. Лопата, замеченная мною около двери, тут бы пригодилась...");
 			AddTranslation(text);
 			
 			text = CreateTranslation("FrozenAdventurer2");
@@ -307,73 +338,73 @@ namespace Antiaris
             text.AddTranslation(GameCulture.Russian, "Я думаю, что смогу скоро дать тебе еще задание, если оно тебе нужно!");
 			AddTranslation(text);
 
-            text = CreateTranslation("Quest1");
+            text = CreateTranslation("Quest0");
             text.SetDefault("One day when our crew was crossing the sea, we got into a dreadful storm. We've lost a lot of people, our ship was damaged, but the most terrible loss was my compass. My favourite compass with which I had so many adventures now lies at the bottom of the ocean. Please, try fishing it out in the ocean, I really miss it!");
             text.AddTranslation(GameCulture.Chinese, "有一天，我们横渡大海时，遭遇了一场可怕的暴风雨。我们失去了很多的船员，而且我们的船也损坏了，但对我而言最可怕的是我的罗盘已沉入海底。我最喜欢的罗盘和这么多的奇遇现在静静的躺在海底，你能不能试着帮我找回来，哪怕是用一个鱼钩如同大海捞针那样，我真的很想念它！");
             text.AddTranslation(GameCulture.Russian, "Однажды, когда я со своей командой пересекал море, мы попали в ужасный шторм. Мы потеряли много людей, наш корабль был поврежден, но самой ужасной потерей был мой компас. Мой любимый компас, с которым у меня было столько приключений, теперь лежит на дне океана. Пожалуйста, попробуй выудить его в океане, мне он ужасно дорог!");
 			AddTranslation(text);
 			
-			text = CreateTranslation("Name1");
+			text = CreateTranslation("Name0");
 			text.SetDefault("'Lost in the Sea'");
 			text.AddTranslation(GameCulture.Chinese, "“迷失深海”");
 			text.AddTranslation(GameCulture.Russian, "'Утерянный в океане'");
 			AddTranslation(text);
 			
-            text = CreateTranslation("Quest2");
+            text = CreateTranslation("Quest1");
             text.SetDefault("My friend once told me about an interesting artifact. We were in Egypt when he told me about this artifact and it was very hot there. This artifact is a some kind of ice crystal that can cool things. I thought that it would be awesome if I could cool down by using it when it's too hot outside. I only know that different ice creatures contain this crystal inside of them. Can you please find it and bring it to me?");
             text.AddTranslation(GameCulture.Chinese, "我的朋友曾经告诉我一些有趣的东西。我们在埃及时，他告诉了我这个东西，这个东西是一种能冷却物体的冰晶，我想如果外面太热了的话我可以用它来降温避免中暑。我只知道不同的冰元素生物体内含有这种冰晶，你能找到它并把它捎给我吗？");
             text.AddTranslation(GameCulture.Russian, "Мой друг однажды рассказал мне об интересном артефакте. В тот день, когда он рассказал мне о нем, мы были в Египте, а там было очень жарко. Этот артефакт это какой-то кристалл, который может охлаждать вещи. Я подумал, что было бы круто, если бы я смог охлаждаться с его помощью, если на улице слишком жарко. Я только лишь знаю, что разные ледяные существа содержат этот кристалл в себе. Можешь ли ты, пожалуйста, найти его и принести мне?");
 			AddTranslation(text);
 			
-			text = CreateTranslation("Name2");
+			text = CreateTranslation("Name1");
 			text.SetDefault("'Fighting the heat'");
 			text.AddTranslation(GameCulture.Chinese, "“防暑");
 			text.AddTranslation(GameCulture.Russian, "'Борьба с жарой'");
 			AddTranslation(text);
 
-            text = CreateTranslation("Quest3");
+            text = CreateTranslation("Quest2");
             text.SetDefault("My beautiful hat is a bit damaged! I really need to fix it but I need some leather for this. Can you bring me... Let's say... 12 leather, so I can fix it?");
             text.AddTranslation(GameCulture.Chinese, "你看看我漂亮的帽子，已经有好几个破损的地方了！我真的需要修理它，但我需要一些皮革，你能捎给我吗？打个比方...12块山猪皮，这样我可以修复它？");
 			text.AddTranslation(GameCulture.Russian, "Моя красивая шляпа немного повреждена! Я очень хочу починить её, но мне нужно немного кожи, чтобы сделать это. Ты можешь принести мне... Скажем... 12 кожи, чтобы я смог починить её?");
 			AddTranslation(text);
 			
-			text = CreateTranslation("Name3");
+			text = CreateTranslation("Name2");
 			text.SetDefault("'Save the hat!'");
 			text.AddTranslation(GameCulture.Chinese, "“修理帽子”");
 			text.AddTranslation(GameCulture.Russian, "'Спасите шляпу!'");
 			AddTranslation(text);
 
-            text = CreateTranslation("Quest4");
+            text = CreateTranslation("Quest3");
             text.SetDefault("I've heard legends about creatures that were living in deserts. Unfortunately, all of them died during a massive cataclysm. Bones of those creatures are probably lost in the sands. I really want to know more about those creatures but the only way to do it is to find at least a little bone of them. Maybe you can dig in the sand and find any remains of those creatures?");
             text.AddTranslation(GameCulture.Chinese, "我听说过关于生活在沙漠里的生物的传说。不幸的是，它们都在一场大灾变中丧生了。这些生物的骸骨应该是被沙漠埋葬了，我真的很想知道更多关于这些生物的事情。但目前唯一的办法就是找到至少一点的骸骨，也许你可以挖开那些沙子找到这些远古生物的骸骨？");
             text.AddTranslation(GameCulture.Russian, "Я слышал легенды о существах, живших в пустынях. К несчастью, они все погибли из-за огромного катаклизма. Кости тех существ, вероятнее, затеряны в песках. Я очень хочу узнать побольше о тех существах, но единственный способ сделать это, это найти хотя бы маленькую их кость. Может, ты покопаешься в песке и найдешь какие-нибудь останки тех существ?");
 			AddTranslation(text);
 			
-			text = CreateTranslation("Name4");
+			text = CreateTranslation("Name3");
 			text.SetDefault("'Ancient legends'");
 			text.AddTranslation(GameCulture.Chinese, "“远古传说”");
 			text.AddTranslation(GameCulture.Russian, "'Древние легенды'");
 			AddTranslation(text);
 
-            text = CreateTranslation("Quest5");
+            text = CreateTranslation("Quest4");
             text.SetDefault("Have you ever tried an omelette made of harpy eggs? No? Me too, but I really want to try it. Maybe you can bring me a harpy egg so I can cook the omelette of it? I can share it with you!");
             text.AddTranslation(GameCulture.Chinese, "你有没有试过用鹰身女妖的蛋来煎蛋？没有？我也是，但我真的想知道那是什么味道的，也许你可以给我一个鹰身女妖的蛋，这样我可以做它的鸡蛋卷？而且我可以和你一起分享！");
 			text.AddTranslation(GameCulture.Russian, "Ты когда-нибудь пробовал яичницу из яиц гарпий? Нет? Я тоже, но я очень хочу попробовать её. Может ты можешь принести мне яйцо гарпии, чтобы я приготовил эту яичницу? Я могу с тобой ей поделиться!");
 			AddTranslation(text);
 			
-			text = CreateTranslation("Name5");
+			text = CreateTranslation("Name4");
 			text.SetDefault("'Tasty omelette'");
 			text.AddTranslation(GameCulture.Chinese, "“美味煎蛋”");
 			text.AddTranslation(GameCulture.Russian, "'Вкусная яичница'");
 			AddTranslation(text);
 			
-			text = CreateTranslation("Quest6");
+			text = CreateTranslation("Quest5");
             text.SetDefault("I think I just had a brilliant idea... I'll need an apple that's covered in pure gold. But I can't just go and get that kind of thing in a shop! Сan you help me out with this? Don't ask why I need the apple, you'll see later.");
             text.AddTranslation(GameCulture.Chinese, "我有一个有趣的主意...我需要一个纯金的苹果。但我不能在商店买到那种东西！你能帮我这个忙吗？不要问我为什么需要它，以后你会明白的。");
             text.AddTranslation(GameCulture.Russian, "Хм, кажется, у меня появилась гениальная идея... Мне понадобится яблоко, покрытое чистым золотом. Но ведь такое в магазине не купишь! Может, ты мне поможешь? Не спрашивай, зачем мне это яблоко, потом узнаешь.");
 			AddTranslation(text);
 			
-			text = CreateTranslation("Name6");
+			text = CreateTranslation("Name5");
 			text.SetDefault("'Strange experiment'");
 			text.AddTranslation(GameCulture.Chinese, "“古怪试验”");
 			text.AddTranslation(GameCulture.Russian, "'Странный эксперимент'");
@@ -385,91 +416,85 @@ namespace Antiaris
             text.AddTranslation(GameCulture.Russian, "Да! Да! Наконец-то! Узри моё творение! Это маска золотого яблока! Это же шедевр! Тебе нравится? На, померяй. Я вырезал в ней дыры, чтобы ты мог есть и дышать. А, и еще одно: остатки золота я перековал обратно в монеты. Но по сравнению с этой великолепной маской, они ничего не стоят.");
 			AddTranslation(text);
 			
-			text = CreateTranslation("Quest8");
+			text = CreateTranslation("Quest6");
             text.SetDefault("Do you know that skeletons from that dark dungeon can revive fallen allies? I really want to be able to revive dead creatures too! I've gathered some information and found out that they use Necronomicon to do this. Can you go to that spooky place and bring me that magical book?");
             text.AddTranslation(GameCulture.Chinese, "你知道黑暗地牢的那些骷髅可以复活死去的生物吗？我真的希望借此来复活死去的动物们！我收集了一些信息，它们使用一种被叫做“死灵之书”做这个。你能去那个鬼地方给我捎来这本神奇的书吗？");
             text.AddTranslation(GameCulture.Russian, "Ты знаешь, что скелеты из того темного подземелья могут воскрешать мертвых союзников? Я тоже очень хочу воскрешать мертвых существ! Я собрал немного информации и узнал, что они используют Некрономикон чтобы делать это. Ты можешь сходить в это страшное место и принести мне эту магическую книгу?");
 			AddTranslation(text);
 			
-			text = CreateTranslation("Name8");
+			text = CreateTranslation("Name6");
 			text.SetDefault("'Dark Magic'");
 			text.AddTranslation(GameCulture.Chinese, "“黑魔法”");
 			text.AddTranslation(GameCulture.Russian, "'Тёмная магия'");
 			AddTranslation(text);
 			
-			text = CreateTranslation("Quest9");
+			text = CreateTranslation("Quest7");
             text.SetDefault("I'm so tired of these slimes! Whenever I go outside, they immediately attack me! I really want to kill them all but I'm a bad warrior! Can you kill, let's say 25 slimes so I could go outside without any troubles?");
             text.AddTranslation(GameCulture.Chinese, "我真讨厌这些史莱姆！每当我出门时，它们总是立刻攻击我！我真的干死它们，但我却是个很差劲的战士...你能干掉，比方说25个史莱姆吗？让我们出门在外没有任何烦心事！");
             text.AddTranslation(GameCulture.Russian, "Я так устал от этих слизней! Каждый раз, когда я выхожу на улицу, они сразу же меня атакуют! Я очень хочу убить их всех, но из меня ужасный воин. Можешь ли ты убить, скажем, 25 слизней, чтобы я смог выйти на улицу без всяких проблем?");
 			AddTranslation(text);
 			
-			text = CreateTranslation("Name9");
+			text = CreateTranslation("Name7");
 			text.SetDefault("'Annoying creatures'");
 			text.AddTranslation(GameCulture.Chinese, "“恼人粘液”");
 			text.AddTranslation(GameCulture.Russian, "'Надоедливые существа'");
 			AddTranslation(text);
 			
-			text = CreateTranslation("Quest10");
+			text = CreateTranslation("Quest8");
             text.SetDefault("When we once lost our way in caverns, one of our group members told me about a skeleton with a gold hat. We have met one and it captured our mapmaker! Soon we found him dead, I must take revenge on that skeleton! Can you kill it?");
             text.AddTranslation(GameCulture.Chinese, "我们迷失在洞穴的时候，队伍里有一个人告诉我发现了一个戴着黄金矿工头盔的骷髅。我们遇见了那样的骷髅，但是它抓走了我们的制图师，然后很快我们就发现他已经死了。我必须要为死去的队友报仇，你能帮我杀了它吗？");
             text.AddTranslation(GameCulture.Russian, "Когда мы один раз заблудились в подземельях, один из участников нашей команды рассказал мне о скелете с золотой каской. Мы встретили такого, и он схватил нашего картографа! Вскоре мы нашли его мертвым, я должен отомстить тому скелету! Не мог бы ты уничтожить его?");
 			AddTranslation(text);
 			
-			text = CreateTranslation("Name10");
+			text = CreateTranslation("Name8");
 			text.SetDefault("'Vengeance'");
 			text.AddTranslation(GameCulture.Chinese, "“偿还血债”");
 			text.AddTranslation(GameCulture.Russian, "'Отомщение'");
 			AddTranslation(text);
 			
-			text = CreateTranslation("Quest11");
+			text = CreateTranslation("Quest9");
             text.SetDefault("Yesterday I got to a sky island using magic. Everything was peaceful at the beginning but then I got attacked by giant birds! I fell off the island, luckily I haven't broken any bones. Can you kill these birds so I will not get attacked next time?");
             text.AddTranslation(GameCulture.Chinese, "昨天我登上了空岛施法，就在我觉得一切安全时，一些蓝绿色巨禽用它的爪子抓住了我把我从空岛扔了下来，幸好我掉进了水里，没被摔惨。你能干一票它们吗？这样我去空岛也许不会再体验一次蹦极");
             text.AddTranslation(GameCulture.Russian, "Вчера я попал на летающий остров при помощи магии. Сначала всё было мирно, но потом меня атаковали огромные птицы! Я упал с острова, к счастью, я не сломал ни одной кости. Ты можешь убить этих птиц, чтобы в следующий раз на меня не напали?");
 			AddTranslation(text);
 			
-			text = CreateTranslation("Name11");
+			text = CreateTranslation("Name9");
 			text.SetDefault("'Mutated birds'");
 			text.AddTranslation(GameCulture.Chinese, "“突变猛禽”");
 			text.AddTranslation(GameCulture.Russian, "'Мутировавшие птицы'");
 			AddTranslation(text);
 
-            text = CreateTranslation("Quest12");
+            text = CreateTranslation("Quest10");
             text.SetDefault("Let's toss a coin! The loser will bring something to the winner. Ugh... Our coins seems to not have heads and tails... Guess I've won! You have to bring me a silk scarf!");
             text.AddTranslation(GameCulture.Chinese, "我们投硬币吧！赌输了的要给赌赢了的一些东西。诶等等…我们的硬币好像没有正面和反面…我猜我赢了！你得给我一条丝绸围巾！");
             text.AddTranslation(GameCulture.Russian, "Давай подбросим монетку! Проигравший что-нибудь принесёт победителю. Блин, на наших монетах нет орла и решки... Пожалуй, я победил! Ты должен принести мне шёлковый шарфик!");
 			AddTranslation(text);
 			
-			text = CreateTranslation("Name12");
+			text = CreateTranslation("Name10");
 			text.SetDefault("'Prize for the winner'");
 			text.AddTranslation(GameCulture.Chinese, "“获胜奖品”");
 			text.AddTranslation(GameCulture.Russian, "'Приз победившему'");
 			AddTranslation(text);
 
-            text = CreateTranslation("Quest13");
+            text = CreateTranslation("Quest11");
             text.SetDefault("The idea of going fishing during night turned out to be bad! These disgusting zombies snatched fishing rod from my hands and broke it! How am I supposed to fish without fishing rod!? Can you please gather the pieces and repair it?");
             text.AddTranslation(GameCulture.Chinese, "在晚上钓鱼真是个馊主意。那些恶心的僵尸从我的手中夺走并打碎了鱼竿。没鱼竿我怎么钓鱼？你能帮我找回它的残骸并修理吗？");
             text.AddTranslation(GameCulture.Russian, "Идея сходить порыбачить ночью оказалась ужасной! Эти отвратительные зомби вырвали удочку из моих рук и сломали! Как я должен рыбачить без удочки!? Можешь ли ты, пожалуйста, собрать части удочки и починить её?");
 			AddTranslation(text);
 			
-			text = CreateTranslation("Name13");
+			text = CreateTranslation("Name11");
 			text.SetDefault("'The failed fishing'");
 			text.AddTranslation(GameCulture.Chinese, "“摸鱼失败”");
 			text.AddTranslation(GameCulture.Russian, "'Неудавшаяся рыбалка'");
 			AddTranslation(text);
-			
-			int armsDealer = NPC.FindFirstNPC(NPCID.ArmsDealer);
-			var armsDealerName = "";
-			if (armsDealer >= 0)
-			{
-				armsDealerName = Main.npc[armsDealer].GivenName;
-			}
-			text = CreateTranslation("Quest14");
-            text.SetDefault("I just noticed that " + armsDealerName + " is selling something that looks like a blueprint of a weapon! Unfortunately, I don't have enough money to buy it and even if I had - I'm not that smart to understand all these schemes. Think you can buy that blueprint and craft the weapon for me?");
-            text.AddTranslation(GameCulture.Chinese, "我刚刚注意到  " + armsDealerName + " 看起来正在销售某种武器的蓝图！不幸的是，我没有足够的钱币买它，即使我有，我也不能理解所有蓝图上的那些设计。你觉得你能买下那张蓝图并为我制造武器吗？");
-            text.AddTranslation(GameCulture.Russian, "Я только что заметил, что " + armsDealerName + "продаёт что-то похожее на чертёж оружия! К сожалению, у меня нет нужного количества денег, чтобы купить его, а даже если было - я не настолько умный, чтобы понять все эти схемы. Может ты сможешь купить чертёж и создать для меня это оружие?");
+
+			text = CreateTranslation("Quest12");
+            text.SetDefault("I just noticed that this gunslinger is selling something that looks like a blueprint of a weapon! Unfortunately, I don't have enough money to buy it and even if I had - I'm not that smart to understand all these schemes. Think you can buy that blueprint and craft the weapon for me?");
+            text.AddTranslation(GameCulture.Chinese, "我只是注意到那个军火商看起来正在卖一个武器的蓝图，糟糕的是我根本没有钱能够买它，就算我有，我也难以理解蓝图所写的设计方案。我猜，你也许能给我买到那个蓝图并制作出武器？");
+            text.AddTranslation(GameCulture.Russian, "Я только что заметил, что этот стрелок продаёт что-то похожее на чертёж оружия! К сожалению, у меня нет нужного количества денег, чтобы купить его, а даже если было - я не настолько умный, чтобы понять все эти схемы. Может ты сможешь купить чертёж и создать для меня это оружие?");
 			AddTranslation(text);
 			
-			text = CreateTranslation("Name14");
+			text = CreateTranslation("Name12");
 			text.SetDefault("'Making a powerful weapon'");
 			text.AddTranslation(GameCulture.Chinese, "“锻造重武”");
 			text.AddTranslation(GameCulture.Russian, "'Создание мощного оружия'");
@@ -481,25 +506,25 @@ namespace Antiaris
             text.AddTranslation(GameCulture.Russian, "Охх, только взгляни на эту красоту! Рад, что ты помог мне! ... На самом деле, я не думаю, что я когда-нибудь буду использовать эту пушку, так что я думаю, что ты можешь взять её в качестве своей награды.");
 			AddTranslation(text);
 			
-			text = CreateTranslation("Quest15");
+			text = CreateTranslation("Quest13");
             text.SetDefault("Making wings is a really hard process! You need a strong material so the wings won't tear apart when you're flying. I think pieces of demon wings should be suitable. Please, bring me 12 pieces so I can make good wings!");
             text.AddTranslation(GameCulture.Chinese, "制造翅膀的过程是非常困难的！你需要一个强大的材料制作它，这样在你飞行时翅膀才不会断裂。我想恶魔翅膀的碎片应该是合适的，请给我12块碎片让我做一个不错的翅膀！");
             text.AddTranslation(GameCulture.Russian, "Создание крыльев это тяжелый процесс! Нужно подобрать такой крепкий материал, чтобы крылья не порвались при полёте. Я думаю, что части крыльев демона подойдут. Пожалуйста, принеси мне 12 частей, чтобы я смог сделать хорошие крылья!");
 			AddTranslation(text);
 			
-			text = CreateTranslation("Name15");
+			text = CreateTranslation("Name13");
 			text.SetDefault("'How to make wings'");
 			text.AddTranslation(GameCulture.Chinese, "“想入飞飞”");
 			text.AddTranslation(GameCulture.Russian, "'Как создать крылья'");
 			AddTranslation(text);
 			
-			text = CreateTranslation("Quest16");
+			text = CreateTranslation("Quest14");
             text.SetDefault("Where's my chest!? Please, don't tell me that I've lost it... There were so many useful things in it! Wait a second... I didn't lose it! It was a shark who attacked my boat! Yeah, right, it ate my chest! Please, kill some sharks until you find the one who ate my chest and then bring the chest back to me!");
             text.AddTranslation(GameCulture.Chinese, "我的箱子在哪里？别告诉我我把它弄丢了！里面有这么多有用的东西…等等…我没有丢！是一条鲨鱼袭击了我的船后吞下了它。你能在海里杀掉一些鲨鱼，以找到那个吞下我的箱子的那条吗？然后把箱子还给我！");
             text.AddTranslation(GameCulture.Russian, "Где мой сундучок!? Пожалуйста, не говорите, что я потерял его... В нём было столько полезных вещей! Секундочку... Я не потерял его! Это всё акула, которая напала на мой корабль! Да, всё верно, именно она съела мой сундучок! Пожалуйста, убей немного акул, пока не найдешь ту, которая съела мой сундучок и принеси его мне обратно!");
 			AddTranslation(text);
 			
-			text = CreateTranslation("Name16");
+			text = CreateTranslation("Name14");
 			text.SetDefault("'In a shark's stomach'");
 			text.AddTranslation(GameCulture.Chinese, "“在鲨鱼的肚子里”");
 			text.AddTranslation(GameCulture.Russian, "'В желудке акулы'");
@@ -511,61 +536,61 @@ namespace Antiaris
             text.AddTranslation(GameCulture.Russian, "Ох, я не могу найти слов, чтобы отблагодарить тебя! Ты очень сильно помог мне! Вот, возьми эту книгу из сундучка. Кто-то дал её мне давным-давно, и я не думаю, что буду её использовать.");
 			AddTranslation(text);	
 			
-			text = CreateTranslation("Quest17");
+			text = CreateTranslation("Quest15");
             text.SetDefault("I have tried different food during my life but I've never eaten a coconut! It may sound oddly but it's true. I know that there're some palms growing near the ocean and I've even seen coconuts on them! The problem is that I'm too short to get them. Please, bring me 16 coconuts and then I can find out if coconuts are that tasty as many people say!");
             text.AddTranslation(GameCulture.Chinese, "我一生中品尝过诸多食物，但我仍然没有吃过椰子！听起来很奇怪，但这是真的。我知道海边生长着一些棕榈树，然后看到上面长了很多的椰子！问题是我太矮了，而且我没有斧子所以拿不到。能给我16个椰子吗？我想知道椰子是不是像许多人说的那样美味！");
             text.AddTranslation(GameCulture.Russian, "В течение своей жизни я пробовал разную еду, но я никогда не ел кокос! Это звучит странно, но это так. Я знаю, что рядом с океаном растёт несколько пальм и я даже видел на них кокосы! Проблема в том, что я не настолько высокий чтобы достать их. Пожалуйста, принеси мне 16 кокосов, чтобы я смог понять, действительно ли они такие вкусные, как многие говорят!");
 			AddTranslation(text);
 			
-			text = CreateTranslation("Name17");
+			text = CreateTranslation("Name15");
 			text.SetDefault("'Delicious food'");
 			text.AddTranslation(GameCulture.Chinese, "“美味佳肴”");
 			text.AddTranslation(GameCulture.Russian, "'Изысканная еда'");
 			AddTranslation(text);
 			
-			text = CreateTranslation("Quest18");
-            text.SetDefault("During my adventures I often use torches. No, not those made with gel because they're glowing not as bright as I need. I prefer using charcoal torches! Unfortunately, I'm out of my supplies. I'll tell you how to get charcoal and you will bring me it, alright? It's pretty easy to do: just pour some lava on wood and you'll get charcoal. Now go and bring me 25 of it!");
-            text.AddTranslation(GameCulture.Chinese, "在冒险的时候我经常使用火把。不，不是那些用凝胶做的，因为它们没有我需要的那么亮。所以我喜欢用炭火把！不幸的是，我这里已经没有炭了。我告诉你如何得到木炭，然后带给我，好吗？这是很容易做到的：只要在木头上倒一些岩浆，就能得到木炭。现在去给我拿25块木炭好吗？");
-            text.AddTranslation(GameCulture.Russian, "Во время своих приключений я часто использую факела. Нет, не те, которые созданы из геля, потому что они светятся не так ярко, как мне надо. Я предпочитаю факела из древесного угля! Увы, у меня кончились запасы. Я расскажу тебе как получить древесный уголь, а ты принесешь мне его, хорошо? Всё достаточно просто: просто вылей немного лавы на древесину и ты получишь древесный уголь. Теперь иди и принеси мне 25 штук!");
+			text = CreateTranslation("Quest16");
+            text.SetDefault("Did you know that if you cut down burnt trees you will get charcoal? I bet you did not. Well, since now you have this information, can you please get me 25 charcoal? I really need it to make some torches!");
+            text.AddTranslation(GameCulture.Chinese, "你知道如果砍伐烧焦的树木会得到木炭吗？ 我赌五毛你肯定不知道。 那么，既然你了解到了这些，能给我25个木炭吗？ 我真的需要它来制作一些火把！");
+            text.AddTranslation(GameCulture.Russian, "А ты знал, что если срубить сгоревшие дерева, то получишь древесный уголь? Спорю, что не знал. Что же, раз теперь ты владеешь такой информацией, можешь ли ты принести мне 25 древесного угля? Он очень нужен мне для создания факелов!");
 			AddTranslation(text);
 
-			text = CreateTranslation("Name18");
-			text.SetDefault("'No need in gel'");
-			text.AddTranslation(GameCulture.Chinese, "“不需要凝胶”");
-			text.AddTranslation(GameCulture.Russian, "'Нет нужды в геле'");
+			text = CreateTranslation("Name16");
+			text.SetDefault("'Hot to the touch'");
+			text.AddTranslation(GameCulture.Chinese, "“触手可及”");
+			text.AddTranslation(GameCulture.Russian, "'Горячий на ощупь");
 			AddTranslation(text);			
 
-			text = CreateTranslation("Quest19");
+			text = CreateTranslation("Quest17");
             text.SetDefault("I'm currently trying to make a potion that will allow one to climb on walls. A potion like this would be very useful for my adventures! The problem is that I need some spider samples to make it and I am... Afraid of spiders. Can you gather 12 spider masses for me? Just go to a spider nest, kill some baby creepers and then gather the mass.");
             text.AddTranslation(GameCulture.Chinese, "我正在尝试制作一种可以让人进行攀爬的药水。这样的药水对我的冒险而言非常有用！问题是我需要一些蜘蛛样本来制作，但是…我怕蜘蛛…你能帮我收集12个蜘蛛分泌物吗？只需要去蜘蛛洞杀掉一些爬行者幼体来采集分泌物。");
             text.AddTranslation(GameCulture.Russian, "Сейчас я пытаюсь сделать зелье, которое позволит ползать по стенам. Такое зелье было бы очень полезным для моих приключений! Но проблема в том, что мне нужно немного образцов пауков, чтобы сделать его, а я... Боюсь пауков. Можешь ли ты собрать 12 паучих масс для меня? Просто иди в гнездо пауков, убей немного маленьких паучков и затем собери массу.");
 			AddTranslation(text);
 			
-			text = CreateTranslation("Name19");
+			text = CreateTranslation("Name17");
 			text.SetDefault("'Arachnophobia'");
 			text.AddTranslation(GameCulture.Chinese, "“蜘蛛恐惧症”");
 			text.AddTranslation(GameCulture.Russian, "'Арахнофобия'");
 			AddTranslation(text);
 
-			text = CreateTranslation("Quest20");
+			text = CreateTranslation("Quest18");
             text.SetDefault("I'm really-really upset right now! Wanna know what happened? I was making a presents for my friends. When I've made 20 of them, a monster whose name is Krampus came and stole the presents! I really don't want my friends to be left without presents from me this year! Please, find that monster and bring my presents back!");
             text.AddTranslation(GameCulture.Chinese, "我现在真的很难过！想知道发生了什么事了吗？我在给朋友做礼物，当我做了第20件时，一个叫 Krampus 的怪物把礼物全偷走了！我真的不想让我的朋友今年不给我送礼物！请找到那个怪物，把我的礼物夺回来！");
             text.AddTranslation(GameCulture.Russian, "Я очень-очень расстроен! Хочешь знать, что произошло? Я делал подарки для моих друзей. Когда я сделал 20, монстр, чьё имя Крампус, пришёл и украл подарки! Я очень не хочу, чтоб мои друзья остались без подарков от меня в этом году! Пожалуйста, найди этого монстра и верни мои подарки!");
 			AddTranslation(text);		
 			
-			text = CreateTranslation("Name20");
+			text = CreateTranslation("Name18");
 			text.SetDefault("'Stolen Christmas'");
 			text.AddTranslation(GameCulture.Chinese, "被盗的圣诞节");
 			text.AddTranslation(GameCulture.Russian, "'Украденное Рожедство'");
 			AddTranslation(text);
 
-			text = CreateTranslation("Quest21");
+			text = CreateTranslation("Quest19");
             text.SetDefault("There're rumors about very strange slimes living deep in the caves. You probably wonder why strange, right? That's because those chunks of gel eat emeralds! That's why they're covered with emerald shards like with a shell. Bring me some of these shards and I'll create something. Now go!");
             text.AddTranslation(GameCulture.Chinese, "有传言说在地下深处生存着非常古怪的史莱姆。你肯定想知道它为什么古怪，对吧？那是因为这些凝胶居然吃翡翠！这就是为什么它们被像是翡翠的东西包裹住，给我点它们的碎片，我会做点有趣的东西，出发吧！");
             text.AddTranslation(GameCulture.Russian, "Ходят слухи об очень странных слизнях, живущих глубоко в пещерах. Ты наверное думаешь, почему о странных, да? Всё потому что эти куски геля едят изумруды! Именно поэтому они покрыты изумрудными осколками, как будто панцирем. Принеси мне немного этих осколков и я кое-что сделаю. Иди же!");
 			AddTranslation(text);
 
-			text = CreateTranslation("Name21");
+			text = CreateTranslation("Name19");
 			text.SetDefault("'Slimes that eat emeralds'");
 			text.AddTranslation(GameCulture.Chinese, "“吃翡翠的史莱姆”");
 			text.AddTranslation(GameCulture.Russian, "'Слизни, что едят изумруды'");
@@ -697,18 +722,6 @@ namespace Antiaris
             text.AddTranslation(GameCulture.Russian, "Вы смотрите в зеркало. Вы видите своё отражение, но ещё позади вас что-то движется.");
 			AddTranslation(text);
 			
-			text = CreateTranslation("MirrorBreak");
-            text.SetDefault("Break");
-            text.AddTranslation(GameCulture.Chinese, "“摧毁”");
-            text.AddTranslation(GameCulture.Russian, "Разбить");
-			AddTranslation(text);
-			
-			text = CreateTranslation("Mirror2");
-            text.SetDefault("You've tried punching the mirror to destroy it. Seems like you've damaged it a bit but in a second all cracks on the mirror disappear. Also you've hurt you hand.");
-            text.AddTranslation(GameCulture.Chinese, "“你试图砸了这个镜子。你本以为能够摧毁，但是镜子上的裂痕又复原了，你也因此伤了你的手");
-            text.AddTranslation(GameCulture.Russian, "Вы попытались ударить зеркало чтобы разбить его. Похоже, что вы его немного повредили, но через секунду все трещины на зеркале пропали. А ещё вы поранили свою руку.");
-			AddTranslation(text);
-			
 			text = CreateTranslation("Mirror3");
             text.SetDefault("The mirror seems to be broken.");
             text.AddTranslation(GameCulture.Chinese, "镜子已经碎了");
@@ -727,30 +740,12 @@ namespace Antiaris
             text.AddTranslation(GameCulture.Russian, "Можно сдать");
 			AddTranslation(text);
 			
-			text = CreateTranslation("SpellFail");
-			text.SetDefault("% chance to fail the spell");
-			text.AddTranslation(GameCulture.Chinese, "%的概率咒语失效");
-			text.AddTranslation(GameCulture.Russian, "% шанс неудачного заклинания");
-			AddTranslation(text);
-			
-			text = CreateTranslation("SpellFailText");
-			text.SetDefault("Spell failed!");
-			text.AddTranslation(GameCulture.Chinese, "咒语失效！");
-			text.AddTranslation(GameCulture.Russian, "Заклинание не удалось!");
-			AddTranslation(text);
-			
 			text = CreateTranslation("Information1");
 			text.SetDefault("Thank you for playing with Antiaris!");
 			text.AddTranslation(GameCulture.Chinese, "感谢你游玩Antiaris！我们的QQ官方群号码:669341455!");
 			text.AddTranslation(GameCulture.Russian, "Спасибо, что играете с Antiaris!");
 			AddTranslation(text);
-			
-			text = CreateTranslation("Information2");
-			text.SetDefault("You currently have weapon fails mechanic enabled. You can disable it via config file in 'Terraria/ModLoader/Mod Configs'");
-			text.AddTranslation(GameCulture.Chinese, "当前咒语失效机制是开启的，你可以通过修改在'Terraria/ModLoader/Mod Configs'里的文件来禁用它");
-			text.AddTranslation(GameCulture.Russian, "В данный момент у вас включена механика неудачного срабатывания оружия. Вы можете выключить её через файл настройки в папке 'Terraria/ModLoader/Mod Configs'");
-			AddTranslation(text);
-			
+
 			text = CreateTranslation("TimeStop1");
             text.SetDefault("<{0}> Time, stop!");
             text.AddTranslation(GameCulture.Chinese, "<{0}> 时停！");
@@ -780,29 +775,212 @@ namespace Antiaris
 			text.AddTranslation(GameCulture.Chinese, "{0} 尘埃落定...");
 			text.AddTranslation(GameCulture.Russian, "{0} глотает пыль...");
 			AddTranslation(text);
-			
-			text = CreateTranslation("SpellFailBonus");
-			text.SetDefault("\n{0}% reduced spell fail chance");
-			text.AddTranslation(GameCulture.Chinese, "\n减少 {0}% 咒语失效概率");
-			text.AddTranslation(GameCulture.Russian, "\nНа {0}% снижает шанс неудачного произнесения заклинания");
-			AddTranslation(text);
-			
-			text = CreateTranslation("SpellFailBonus2");
-			text.SetDefault("{0}% reduced spell fail chance");
-			text.AddTranslation(GameCulture.Chinese, "减少 {0}% 咒语失效概率");
-			text.AddTranslation(GameCulture.Russian, "На {0}% снижает шанс неудачного произнесения заклинания");
-			AddTranslation(text);
-			
+
 			text = CreateTranslation("SnowHouseGen");
 			text.SetDefault("A cozy house appears in snow-capped lands...");
 			text.AddTranslation(GameCulture.Russian, "Уютный домик появляется в заснеженных землях...");
 			text.AddTranslation(GameCulture.Chinese, "一个舒适的房子出现在积雪覆盖的土地上…");
-			AddTranslation(text);
+            AddTranslation(text);
+			
+			text = CreateTranslation("InjuredDeath");
+            text.SetDefault("{0} couldn't stop the bleeding.");
+            text.AddTranslation(GameCulture.Russian, "{0} не смог остановить кровотечение.");
+            text.AddTranslation(GameCulture.Chinese, "{0} 无法止住流血...");
+            AddTranslation(text);
+
+            text = CreateTranslation("AdventurerSaid");
+            text.SetDefault("I've written down\nAdventurer's words, he said: \n");
+            text.AddTranslation(GameCulture.Russian, "Я записал слова\nПутешественника, он сказал: \n");
+            text.AddTranslation(GameCulture.Chinese, "我记下了冒险家的话，他说：\n");
+            AddTranslation(text);
+
+            text = CreateTranslation("AdventurerHelp");
+            text.SetDefault("\n\nI need to help him if I want to get a reward.");
+            text.AddTranslation(GameCulture.Russian, "\n\nЯ должен помочь ему, если хочу получить награду.");
+            text.AddTranslation(GameCulture.Chinese, "\n\n看来如果我想得到报酬，我需要帮助他。");
+            AddTranslation(text);
+
+            text = CreateTranslation("NoTask");
+            text.SetDefault("I don't have any tasks from Adventurer.\nMaybe I should ask him if he has one for me?");
+            text.AddTranslation(GameCulture.Russian, "У меня нету никаких заданий от\nПутешественника. Может мне стоит спросить его, есть ли у него какое-нибудь задание для меня?");
+            text.AddTranslation(GameCulture.Chinese, "我目前没有冒险家的任何任务\n也许我应该问他是否有一个能够给我？");
+            AddTranslation(text);
+
+            text = CreateTranslation("TrackerButton");
+            text.SetDefault("You can move the tracker by holding it.\nPress this button to get full quest description.\nPress {0} to open/close the tracker.");
+            text.AddTranslation(GameCulture.Russian, "Вы можете передвигать трэкер, держа его.\nНажмите эту кнопку, чтобы получить полное описание квеста.\nPress {0}, чтобы открыть/закрыть трэкер.");
+            text.AddTranslation(GameCulture.Chinese, "");
+            AddTranslation(text);
+
+            text = CreateTranslation("TrackerButton1");
+            text.SetDefault("You can move the tracker by holding it.\nPress this button to get full quest description.\nPress ");
+            text.AddTranslation(GameCulture.Russian, "Вы можете передвигать трэкер, держа его.\nНажмите эту кнопку, чтобы получить полное описание квеста.\nНажмите ");
+            text.AddTranslation(GameCulture.Chinese, "你可以按住任务追踪器来拖动它\n点击这个按钮得到完整的任务描述\n点击 ");
+            AddTranslation(text);
+
+            text = CreateTranslation("TrackerButton2");
+            text.SetDefault(" to open/close the tracker.");
+            text.AddTranslation(GameCulture.Russian, ", чтобы открыть/закрыть трэкер");
+            text.AddTranslation(GameCulture.Chinese, " 打开/关闭追踪器");
+            AddTranslation(text);
+
+            text = CreateTranslation("TrackerNoQuest1");
+            text.SetDefault("You have no quest active!");
+            text.AddTranslation(GameCulture.Russian, "У вас нету активного квеста!");
+            text.AddTranslation(GameCulture.Chinese, "你目前没有任务！");
+            AddTranslation(text);
+
+            text = CreateTranslation("TrackerNoQuest2");
+            text.SetDefault("");
+            text.AddTranslation(GameCulture.Russian, "");
+            text.AddTranslation(GameCulture.Chinese, "");
+            AddTranslation(text);
+
+            text = CreateTranslation("TrackerNoQuest3");
+            text.SetDefault("");
+            text.AddTranslation(GameCulture.Russian, "");
+            text.AddTranslation(GameCulture.Chinese, "");
+            AddTranslation(text);
+
+            text = CreateTranslation("LifeCrystalCanUse");
+            text.SetDefault("[c/E5000B:Amount of Life Crystals you can use: {0}]");
+            text.AddTranslation(GameCulture.Russian, "[c/E5000B:Количество Кристаллов жизни, которых вы можете использовать: {0}]");
+            text.AddTranslation(GameCulture.Chinese, "[c/E5000B:你可以使用的生命水晶数量 {0}]");
+            AddTranslation(text);
+
+            text = CreateTranslation("LifeCrystalNoUse");
+            text.SetDefault("[c/E5000B:You've reached the limit of using Life Crystals!]");
+            text.AddTranslation(GameCulture.Russian, "[c/E5000B:Вы достигли лимит по использованию Кристаллов жизни!]");
+            text.AddTranslation(GameCulture.Chinese, "[c/E5000B:你已经达到使用生命水晶的最大上限了！]");
+            AddTranslation(text);
+
+            text = CreateTranslation("LifeCrystalNoUse2");
+            text.SetDefault("[c/E5000B:In order to increase maximum amount of health, find Blazing Hearts in the Underworld.]");
+            text.AddTranslation(GameCulture.Russian, "[c/E5000B:Для того, чтобы увеличить максимальное количество жизней, найдите Пылающие сердца в Аду.]");
+            text.AddTranslation(GameCulture.Chinese, "[c/E5000B:如果你想继续增加最大体力值，请到地狱寻找燃烧之心]");
+            AddTranslation(text);
+
+            text = CreateTranslation("BlazingHeartCanUse");
+            text.SetDefault("[c/E5000B:Amount of Blazing Hearts you can use: {0}]");
+            text.AddTranslation(GameCulture.Russian, "[c/E5000B:Количество Пылающих сердец, которых вы можете использовать: {0}]");
+            text.AddTranslation(GameCulture.Chinese, "[c/E5000B:你可以使用的燃烧之心数量 {0}]");
+            AddTranslation(text);
+
+            text = CreateTranslation("BlazingHeartCantUse");
+            text.SetDefault("[c/E5000B:You can't use Blazing Hearts until you reach 300 health!]");
+            text.AddTranslation(GameCulture.Russian, "[c/E5000B:Вы не можете использовать Пылающие сердца, пока не достигнете 300 здоровья!]");
+            text.AddTranslation(GameCulture.Chinese, "[c/E5000B:你不能够在最大体力值到 300 之前使用燃烧之心！]");
+            AddTranslation(text);
+
+            text = CreateTranslation("BlazingHeartNoUse");
+            text.SetDefault("[c/E5000B:You've reached the limit of using Blazing Hearts!]");
+            text.AddTranslation(GameCulture.Russian, "[c/E5000B:Вы достигли лимит по использованию Пылающих сердец!]");
+            text.AddTranslation(GameCulture.Chinese, "[c/E5000B:你已经达到使用燃烧之心的最大上限了！]");
+            AddTranslation(text);
+
+            text = CreateTranslation("BlazingHeartNoUse2");
+            text.SetDefault("[c/E5000B:In order to increase maximum amount of health, find Dazzling Hearts in the Underground Hallow.]");
+            text.AddTranslation(GameCulture.Russian, "[c/E5000B:Для того, чтобы увеличить максимальное количество жизней, найдите Сияющие сердца в подземном Святом биоме.]");
+            text.AddTranslation(GameCulture.Chinese, "[c/E5000B:如果你想继续增加最大体力值，请到神圣之地的地下寻找璀璨之心]");
+            AddTranslation(text);
+
+            text = CreateTranslation("DazzlingHeartCanUse");
+            text.SetDefault("[c/E5000B:Amount of Dazzling Hearts you can use: {0}]");
+            text.AddTranslation(GameCulture.Russian, "[c/E5000B:Количество Сияющих сердец, которых вы можете использовать: {0}]");
+            text.AddTranslation(GameCulture.Chinese, "[c/E5000B:你可以使用的璀璨之心数量 {0}]");
+            AddTranslation(text);
+
+            text = CreateTranslation("DazzlingHeartCantUse");
+            text.SetDefault("[c/E5000B:You can't use Dazzling Hearts until you reach 400 health!]");
+            text.AddTranslation(GameCulture.Russian, "[c/E5000B:Вы не можете использовать Сияющие сердца, пока не достигнете 400 здоровья!]");
+            text.AddTranslation(GameCulture.Chinese, "[c/E5000B:你不能够在最大体力值到 400 之前使用璀璨之心！]");
+            AddTranslation(text);
+
+            text = CreateTranslation("DazzlingHeartNoUse");
+            text.SetDefault("[c/E5000B:You've reached the limit of using Dazzling Hearts!]");
+            text.AddTranslation(GameCulture.Russian, "[c/E5000B:Вы достигли лимит по использованию Сияющих сердец!]");
+            text.AddTranslation(GameCulture.Chinese, "[c/E5000B:你已经达到使用璀璨之心的最大上限了！]");
+            AddTranslation(text);
+
+            text = CreateTranslation("DazzlingHeartNoUse2");
+            text.SetDefault("[c/E5000B:In order to increase maximum amount of health, find Life Fruits in the Underground Jungle after you defeat any mechanical boss.]");
+            text.AddTranslation(GameCulture.Russian, "[c/E5000B:Для того, чтобы увеличить максимальное количество жизней, найдите Фрукты жизни в подземных Джунглях после победы над любым механическим боссом.]");
+            text.AddTranslation(GameCulture.Chinese, "[c/E5000B:如果你想继续增加最大体力值，请在击败所有机械Boss后进入丛林地下寻找生命果]");
+            AddTranslation(text);
+
+            text = CreateTranslation("LifeFruitCanUse");
+            text.SetDefault("[c/E5000B:Amount of Life Fruits you can use: {0}]");
+            text.AddTranslation(GameCulture.Russian, "[c/E5000B:Количество Фруктов жизни, которых вы можете использовать: {0}]");
+            text.AddTranslation(GameCulture.Chinese, "[c/E5000B:你可以使用的生命果数量 {0}]");
+            AddTranslation(text);
+
+            text = CreateTranslation("LifeFruitCantUse");
+            text.SetDefault("[c/E5000B:You can't use Life Fruits until you reach 450 health!]");
+            text.AddTranslation(GameCulture.Russian, "[c/E5000B:Вы не можете использовать Фрукты жизни, пока не достигнете 450 здоровья!]");
+            text.AddTranslation(GameCulture.Chinese, "[c/E5000B:你不能够在最大体力值到 450 之前使用生命果！]");
+            AddTranslation(text);
+
+            text = CreateTranslation("LifeFruitNoUse");
+            text.SetDefault("[c/E5000B:You've reached the limit of using Life Fruits!]");
+            text.AddTranslation(GameCulture.Russian, "[c/E5000B:Вы достигли лимит по использованию Фруктов жизни!]");
+            text.AddTranslation(GameCulture.Chinese, "[c/E5000B:你已经达到使用生命果的最大上限了！]");
+            AddTranslation(text);
+
+            text = CreateTranslation("RodBroken");
+            text.SetDefault("<{0}> Uh-oh... I hope the Adventurer will not notice that I've broken his fishing rod again...");
+            text.AddTranslation(GameCulture.Russian, "<{0}> Ой-ой... Я надеюсь, Путешественник не заметит, что я вновь сломал его удочку...");
+            text.AddTranslation(GameCulture.Chinese, "<{0}> 啊哦…我希望冒险家不会注意到我又弄坏了他的鱼竿...");
+            AddTranslation(text);
+
+            text = CreateTranslation("ThanksRod1");
+            text.SetDefault("Thank you for your help! I really appreciate it!");
+            text.AddTranslation(GameCulture.Chinese, "十分感谢，我真的感激不尽！");
+            text.AddTranslation(GameCulture.Russian, "Спасибо за твою помощь! Я очень ценю это!");
+            AddTranslation(text);
+
+            text = CreateTranslation("ThanksRod2");
+            text.SetDefault("Great! Thank your for your he-... Wait... What are these strange marks?.. Oh, now I get it. Did you really tried to fish with my rod and it broke again!? Did I allow you to use it? Go away, you will not get any rewards.");
+            text.AddTranslation(GameCulture.Russian, "Отлично! Спасибо тебе за по-.. Погоди-ка... Что это за странные следы?.. А, теперь мне всё ясно. Ты что, правда решил порыбачить моей удочкой и она опять сломалась!? Я тебе вообще разрешал использовать её? Уходи, не получишь ты никаких наград.");
+            text.AddTranslation(GameCulture.Chinese, "漂亮！谢谢你的…诶…等等，这些奇怪的痕迹是什么？哦，我现在明白了。你真的试着使用它并且又弄坏了！？我让你用它了吗？走开，我不会给你任何报酬。");
+            AddTranslation(text);
+
+            text = CreateTranslation("HarpyEggBroken");
+            text.SetDefault("<{0}> Great, the egg got destroyed! Now I have to find another one.");
+            text.AddTranslation(GameCulture.Russian, "<{0}> Отлично, яйцо было уничтожено! Теперь мне придется искать ещё одно.");
+            text.AddTranslation(GameCulture.Chinese, "<{ 0}> 漂亮，蛋已经被破坏了！现在我必须要找到下一个。");
+            AddTranslation(text);
+
+            text = CreateTranslation("HarpyEggDeath");
+            text.SetDefault("Baby Egg was obliterated...");
+            text.AddTranslation(GameCulture.Russian, "Маленькое Яйцо было уничтожено...");
+            text.AddTranslation(GameCulture.Chinese, "蛋被扼杀了...");
+            AddTranslation(text);
+            #endregion
         }
 
         public override void Unload()
         {
+            cQuestTexture = null;
+            Instance = null;
+            Thorium = null;
+			kRPG = null;
+			RockosARPG = null;
+            TerrariaOverhaul = null;
+            stand = null;
+            hideTracker = null;
+            trackerTexture = null;
+            adventurerKey = null;
+
+
             AntiarisGlowMasks.Unload();						
+        }
+
+        public override void UpdateUI(GameTime gameTime)
+        {
+            if (questInterface != null)
+                questInterface.Update(gameTime);
+            if (questLog != null)
+                questLog.Update(gameTime);
         }
 
         public override void AddRecipes()
@@ -1025,9 +1203,36 @@ namespace Antiaris
 
         public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
         {
+            #region Quest Tracker + log
             Mod mod = ModLoader.GetMod("Antiaris");
 			var questSystem = Main.player[Main.myPlayer].GetModPlayer<QuestSystem>(mod);
             var aPlayer = Main.player[Main.myPlayer].GetModPlayer<AntiarisPlayer>(mod);
+            int MouseTextIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Inventory"));
+            if (MouseTextIndex != -1)
+            {
+                layers.Insert(MouseTextIndex, new LegacyGameInterfaceLayer(
+                    "Antiaris: Quest UI",
+                    delegate
+                    {
+                        if(QuestTrackerUI.visible)
+                            questTracker.Draw(Main.spriteBatch);
+                        return true;
+                    },
+                    InterfaceScaleType.UI)
+                );
+                layers.Insert(MouseTextIndex, new LegacyGameInterfaceLayer(
+                    "Antiaris: Quest UI",
+                    delegate
+                    {
+                        if (CurrentQuestUI.visible)
+                            cQuestUI.Draw(Main.spriteBatch);
+                        return true;
+                    },
+                    InterfaceScaleType.UI)
+                );
+            }
+
+            #endregion
             if (!Main.player[Main.myPlayer].ghost && aPlayer.OpenWindow)
             {
                 var index = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Inventory"));
@@ -1064,32 +1269,18 @@ namespace Antiaris
                     InterfaceScaleType.UI);
                 layers.Insert(index, UIState);
             }
-			if(Antiaris.hideTracker.JustPressed && questSystem.CurrentQuest >= 0)
+			if (Antiaris.kRPG == null && Antiaris.RockosARPG == null)
 			{
-				aPlayer.Tracker = !aPlayer.Tracker;
-				Main.PlaySound(12, (int)Main.player[Main.myPlayer].position.X, (int)Main.player[Main.myPlayer].position.Y, 0);
+				var heartLayer = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Inventory"));
+				var heartState = new LegacyGameInterfaceLayer("Antiaris: UI2",
+					delegate
+					{
+						DrawNewHearts(Main.spriteBatch);
+						return true;
+					},
+					InterfaceScaleType.UI);
+				layers.Insert(heartLayer, heartState);
 			}
-			if (questSystem.CurrentQuest >= 0 && aPlayer.Tracker && !Main.playerInventory)
-            {
-                int index = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Inventory"));
-                LegacyGameInterfaceLayer questTracker = new LegacyGameInterfaceLayer("Antiaris: questTracker",
-                    delegate
-                    {
-                        QuestTracker(Main.spriteBatch);
-                        return true;
-                    },
-                    InterfaceScaleType.UI);
-                layers.Insert(index, questTracker);
-            }
-            var heartLayer = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Inventory"));
-            var heartState = new LegacyGameInterfaceLayer("Antiaris: UI2",
-                delegate
-                {
-                    DrawNewHearts(Main.spriteBatch);
-                    return true;
-                },
-                InterfaceScaleType.UI);
-            layers.Insert(heartLayer, heartState);
         }
 
         public void DrawButton(SpriteBatch spriteBatch)
@@ -1119,6 +1310,8 @@ namespace Antiaris
             Utils.DrawBorderStringFourWay(spriteBatch, Main.fontMouseText, note, Main.screenWidth / 2 - 130, 41, new Color((int)Main.mouseTextColor, (int)Main.mouseTextColor, (int)Main.mouseTextColor, (int)Main.mouseTextColor), Color.Black, new Vector2());
 		}
 
+        private float timer = 0.0f;
+        private int currentState = 0;
         public void DrawNewHearts(SpriteBatch spriteBatch)
         {
             lifePerHeart = 20f;
@@ -1159,7 +1352,7 @@ namespace Antiaris
                 var statLife = 0;
                 if ((double)Main.player[Main.myPlayer].statLife >= (double)oneHeart * (double)lifePerHeart)
                 {
-                    statLife = (int)byte.MaxValue;
+                    statLife = 255;
                     if ((double)Main.player[Main.myPlayer].statLife == (double)oneHeart * (double)lifePerHeart)
                         checkDrawPos = true;
                 }
@@ -1175,6 +1368,8 @@ namespace Antiaris
                     if ((double)checkOwnLifeForDraw > 0.0)
                         checkDrawPos = true;
                 }
+                if (checkDrawPos)
+                    scale += Main.cursorScale - 1.0f;
                 var x = 0;
                 var y = 0;
                 if (oneHeart > 10)
@@ -1183,186 +1378,37 @@ namespace Antiaris
                     y += 26;
                 }
                 var a = (int)((double)statLife * 0.9);
+                int startX;
+                var info = typeof(Main).GetField("UI_ScreenAnchorX",
+                BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
+                startX = (int)info.GetValue(null);
+                ++timer;
+                if (timer % 80f == 0f) currentState += 1;
+                if (timer >= 80f) timer = 0.0f;
+                if (currentState > 2) currentState = 0;
                 if (!Main.player[Main.myPlayer].ghost)
                 {
                     if (lifeForBlazingHeart > 0)
                     {
                         --lifeForBlazingHeart;
-                        Main.spriteBatch.Draw(mod.GetTexture("Miscellaneous/LifeCrystal2"), new Vector2((float)(500 + 26 * (oneHeart - 1) + x + startX + Main.heartTexture.Width / 2), (float)(32.0 + ((double)Main.heartTexture.Height - (double)Main.heartTexture.Height * (double)scale) / 2.0) + (float)y + (float)(Main.heartTexture.Height / 2)), new Rectangle?(new Rectangle(0, 0, Main.heartTexture.Width, Main.heartTexture.Height)), new Color(statLife, statLife, statLife, a), 0.0f, new Vector2((float)(Main.heartTexture.Width / 2), (float)(Main.heartTexture.Height / 2)), scale, SpriteEffects.None, 0.0f);
+                        var texture2 = mod.GetTexture("Miscellaneous/LifeCrystal2");
+                        spriteBatch.Draw(texture2, new Vector2((float)(500 + 26 * (oneHeart - 1) + x + startX + texture2.Width / 2), (float)(32.0 + ((double)texture2.Height - (double)texture2.Height * (double)scale) / 2.0) + (float)y + (float)(texture2.Height / 2)), new Rectangle?(new Rectangle(0, 0, texture2.Width, texture2.Height)), new Color(statLife, statLife, statLife, a), 0.0f, new Vector2((float)(texture2.Width / 2), (float)(texture2.Height / 2)), scale, SpriteEffects.None, 0.0f);
                     }
                     if (lifeForDazzlingHeart > 0)
                     {
                         --lifeForDazzlingHeart;
-                        Main.spriteBatch.Draw(mod.GetTexture("Miscellaneous/LifeCrystal3"), new Vector2((float)(500 + 26 * (oneHeart - 1) + x + startX + Main.heartTexture.Width / 2), (float)(32.0 + ((double)Main.heartTexture.Height - (double)Main.heartTexture.Height * (double)scale) / 2.0) + (float)y + (float)(Main.heartTexture.Height / 2)), new Rectangle?(new Rectangle(0, 0, Main.heartTexture.Width, Main.heartTexture.Height)), new Color(statLife, statLife, statLife, a), 0.0f, new Vector2((float)(Main.heartTexture.Width / 2), (float)(Main.heartTexture.Height / 2)), scale, SpriteEffects.None, 0.0f);
+                        var texture2 = mod.GetTexture("Miscellaneous/LifeCrystal3");
+                        spriteBatch.Draw(texture2, new Vector2((float)(500 + 26 * (oneHeart - 1) + x + startX + texture2.Width / 2), (float)(32.0 + ((double)texture2.Height - (double)texture2.Height * (double)scale) / 2.0) + (float)y + (float)(texture2.Height / 2)), new Rectangle?(new Rectangle(0, 0, texture2.Width, texture2.Height)), new Color(statLife, statLife, statLife, a), 0.0f, new Vector2((float)(texture2.Width / 2), (float)(texture2.Height / 2)), scale, SpriteEffects.None, 0.0f);
                     }
                     if (lifeForLifeFruit > 0)
                     {
                         --lifeForLifeFruit;
-                        Main.spriteBatch.Draw(mod.GetTexture("Miscellaneous/LifeCrystal4"), new Vector2((float)(500 + 26 * (oneHeart - 1) + x + startX + Main.heartTexture.Width / 2), (float)(32.0 + ((double)Main.heartTexture.Height - (double)Main.heartTexture.Height * (double)scale) / 2.0) + (float)y + (float)(Main.heartTexture.Height / 2)), new Rectangle?(new Rectangle(0, 0, Main.heartTexture.Width, Main.heartTexture.Height)), new Color(statLife, statLife, statLife, a), 0.0f, new Vector2((float)(Main.heartTexture.Width / 2), (float)(Main.heartTexture.Height / 2)), scale, SpriteEffects.None, 0.0f);
+                        var texture3 = mod.GetTexture("Miscellaneous/LifeCrystal4");
+                        spriteBatch.Draw(texture3, new Vector2((float)(500 + 26 * (oneHeart - 1) + x + startX + texture3.Width / 2), (float)(32.0 + ((double)texture3.Height - (double)texture3.Height * (double)scale) / 2.0) + (float)y + (float)(texture3.Height / 2)), new Rectangle?(new Rectangle(0, 0, texture3.Width, texture3.Height)), new Color(statLife, statLife, statLife, a), 0.0f, new Vector2((float)(texture3.Width / 2), (float)(texture3.Height / 2)), scale, SpriteEffects.None, 0.0f);
                     }
                 }
             }
         }
-
-        //this code is complete garbage
-        //if you see me please make sure to kill me 
-        //zadum
-
-        public void QuestTracker(SpriteBatch spriteBatch)
-        {
-			var mod = ModLoader.GetMod("Antiaris");
-			var aPlayer = Main.player[Main.myPlayer].GetModPlayer<AntiarisPlayer>(mod);
-			var questSystem = Main.player[Main.myPlayer].GetModPlayer<QuestSystem>(mod);
-			string CurrentQuest = Language.GetTextValue("Mods.Antiaris.CurrentQuest");
-			float scaleMultiplier = 0.5f + 1 * 0.5f;
-			int width = (int)(250f * scaleMultiplier);
-            int height = (int)(60f * scaleMultiplier);
-			float positionX = Main.screenWidth - (width * 1.25f);
-			int positionY = 225;
-			const int internalOffset = 10;
-            var background = mod.GetTexture("Miscellaneous/QuestTracker");
-			string Name1 = Language.GetTextValue("Mods.Antiaris.Name1");
-			string Name2 = Language.GetTextValue("Mods.Antiaris.Name2");
-			string Name3 = Language.GetTextValue("Mods.Antiaris.Name3");
-			string Name4 = Language.GetTextValue("Mods.Antiaris.Name4");
-			string Name5 = Language.GetTextValue("Mods.Antiaris.Name5");
-			string Name6 = Language.GetTextValue("Mods.Antiaris.Name6");
-			string Name8 = Language.GetTextValue("Mods.Antiaris.Name8");
-			string Name9 = Language.GetTextValue("Mods.Antiaris.Name9");
-			string Name10 = Language.GetTextValue("Mods.Antiaris.Name10");	
-			string Name11 = Language.GetTextValue("Mods.Antiaris.Name11");
-			string Name12 = Language.GetTextValue("Mods.Antiaris.Name12");
-			string Name13 = Language.GetTextValue("Mods.Antiaris.Name13");
-			string Name14 = Language.GetTextValue("Mods.Antiaris.Name14");
-			string Name15 = Language.GetTextValue("Mods.Antiaris.Name15");
-			string Name16 = Language.GetTextValue("Mods.Antiaris.Name16");
-			string Name17 = Language.GetTextValue("Mods.Antiaris.Name17");
-			string Name18 = Language.GetTextValue("Mods.Antiaris.Name18");
-			string Name19 = Language.GetTextValue("Mods.Antiaris.Name19");
-			string Name20 = Language.GetTextValue("Mods.Antiaris.Name20");
-			string Name21 = Language.GetTextValue("Mods.Antiaris.Name21");
-			string TurnIn = Language.GetTextValue("Mods.Antiaris.TurnIn");
-			
-			string[] QuestItems = { "OldCompass", "GlacialCrystal", "Leather", "MonsterSkull", "HarpyEgg", "GoldenApple", "Necronomicon", "Slimes", 
-			"UndeadMiner", "BirdTraveller", "SilkScarf", "AdventurerFishingRod", "Bonebardier", "DemonWingPiece", "AdventurerChest", "Coconut", "Charcoal",
-			"SpiderMass", "StolenPresent", "EmeraldShard"};
-			
-			int[] QuestAmount = { 1, 1, 12, 1, 1, 1, 1, 25, 1, 5, 1, 1, 1, 12, 1, 16, 25, 12, 20, 12 };
-			
-			string[] QuestNamesEn = { "Old Compass", "Glacial Crystal", "Leather", "Monster Skull", "Harpy Egg", "Golden Apple", "Necronomicon", "Slime", 
-			"Undead Miner", "Bird Traveller", "Silk Scarf", "Adventurer's Fishing Rod", "Bonebardier", "Demon Wing Piece", "Adventurer's Chest", "Coconut", "Charcoal",
-			"Spider Mass", "Stolen Present", "Emerald Shard"};
-			
-			string[] QuestNamesRu = { "Старый компас", "Ледяной кристалл", "Кожа", "Череп монстра", "Яйцо гарпии", "Золотое яблоко", "Некрономикон", "Слизень", 
-			"Мёртвый шахтёр", "Птица-путешественник", "Шёлковый шарф", "Удочка Путешественника", "Костордир", "Часть крыла демона", "Сундук Путешественника", "Кокос", "Древесный уголь",
-			"Паучья масса", "Украденные подарки", "Изумрудный осколок"};
-
-			string[] QuestNamesCn = { "旧罗盘", "冰晶体", "皮革", "古生物骸骨", "鹰身女妖的蛋", "金苹果", "死灵法书", "史莱姆", 
-            "不死矿工", "荼毒女王鸟", "丝绸围巾", "冒险家的鱼竿", "骸骨炮兵", "恶魔翅膀的碎片", "冒险家的箱子", "椰子", "木炭",
-            "蜘蛛分泌物", "偷来的礼物", "翡翠碎片"};
-			
-
-			string QuestItemName = QuestNamesRu[questSystem.CurrentQuest];
-			if (Language.ActiveCulture == GameCulture.Russian)
-			{
-				QuestItemName = QuestNamesRu[questSystem.CurrentQuest];
-			}
-			else if (Language.ActiveCulture == GameCulture.Chinese)
-			{
-				QuestItemName = QuestNamesCn[questSystem.CurrentQuest];
-			}
-			else 
-			{
-				QuestItemName = QuestNamesEn[questSystem.CurrentQuest];
-			}
-
-			int CurrentItemAmount = 0;
-			string[] QuestNames = { Name1, Name2, Name3, Name4, Name5, Name6, Name8, Name9, Name10, Name11, Name12, Name13, Name14, Name15, Name16, Name17, Name18, Name19, Name20, Name21 };
-			string QuestName = QuestNames[questSystem.CurrentQuest];
-			
-			if(questSystem.CurrentQuest >= 0 && questSystem.CurrentQuest != QuestItemID.Leather)
-			{
-				foreach (var player in Main.player)
-				{
-					if (player.active)
-					{
-						if (player.HasItem(mod.ItemType(QuestItems[questSystem.CurrentQuest])))
-						{
-							Item[] inventory = player.inventory;
-							for (int k = 0; k < inventory.Length; k++)
-							{
-								if (inventory[k].type == mod.ItemType(QuestItems[questSystem.CurrentQuest]))
-								{
-									CurrentItemAmount += inventory[k].stack;
-								}
-							}
-						}
-					}
-				}
-			}
-			
-			//Leather Quest
-			if(questSystem.CurrentQuest == QuestItemID.Leather)
-			{
-				foreach (var player in Main.player)
-				{
-					if (player.active)
-					{
-						if (player.HasItem(259))
-						{
-							Item[] inventory = player.inventory;
-							for (int k = 0; k < inventory.Length; k++)
-							{
-								if (inventory[k].type == 259)
-								{
-									CurrentItemAmount += inventory[k].stack;;
-								}
-							}
-						}
-					}
-				}
-			}
-			//Mob Quests
-			if(questSystem.CurrentQuest == QuestItemID.Traveler || questSystem.CurrentQuest == QuestItemID.Miner || questSystem.CurrentQuest == QuestItemID.Slimes)
-			{
-				CurrentItemAmount += questSystem.QuestKills;
-			}
-			
-			Vector2 descSize = new Vector2(250, 102) * scaleMultiplier;
-			Rectangle barrierBackground = Utils.CenteredRectangle(new Vector2(positionX, positionY), new Vector2(width, height));
-			Rectangle descBackground = Utils.CenteredRectangle(new Vector2(barrierBackground.X + barrierBackground.Width * 0.5f, barrierBackground.Y - internalOffset - descSize.Y * 0.5f), descSize);
-            spriteBatch.Draw(background, descBackground, null, Color.White, 0f, new Vector2(background.Width / 2, background.Height / 2), SpriteEffects.None, 0f);
-			Utils.DrawBorderString(spriteBatch, CurrentQuest, new Vector2(barrierBackground.X - internalOffset - descSize.X / 14.2f, barrierBackground.Y - internalOffset - descSize.Y * 1.32f), Color.Gray, 1f, 0.3f, 0.4f);
-			Utils.DrawBorderString(spriteBatch, QuestNames[questSystem.CurrentQuest], new Vector2(barrierBackground.X - internalOffset - descSize.X / 14.2f, barrierBackground.Y - internalOffset - descSize.Y * 0.89f), Color.Gray, 1f, 0.3f, 0.4f);
-			if(CurrentItemAmount >= QuestAmount[questSystem.CurrentQuest])
-			{
-				Utils.DrawBorderString(spriteBatch, TurnIn, new Vector2(barrierBackground.X - internalOffset - descSize.X / 14.2f, barrierBackground.Y - internalOffset - descSize.Y * 0.68f), Color.Gray, 1f, 0.3f, 0.4f);
-			}
-			else
-			{
-			    string name = QuestItemName + ": " + CurrentItemAmount + "/" + QuestAmount[questSystem.CurrentQuest];
-                if (QuestAmount[questSystem.CurrentQuest] == 1)
-                    name = QuestItemName;
-                int lineAmount;
-                var strArray = Utils.WordwrapString(name, Main.fontMouseText, 460, 10, out lineAmount);
-                ++lineAmount;
-                Vector2 vector2 = new Vector2(barrierBackground.X - internalOffset - descSize.X / 9.0f, barrierBackground.Y - internalOffset - descSize.Y * 0.68f);
-                var x2 = 0.0f;
-                for (var i = 0; i < lineAmount; ++i)
-                {
-                    float k = Main.fontMouseText.MeasureString(strArray[i]).X;
-                    if (x2 < (double)k)
-                        x2 = k;
-                }
-                if (x2 > 320.0f) x2 = 320.0f;
-                float screenWidth = Main.screenWidth - (width * 1.25f);
-                if (vector2.X > Main.screenWidth - (double)x2)
-                    vector2.X--;
-                if (vector2.X < Main.screenWidth - (double)x2 * 2.0)
-                    vector2.X++;
-                Utils.DrawBorderString(spriteBatch, name, vector2, Color.Gray, 1f, 0.3f, 0.4f);
-			}
-		}
 
         public static bool NoInvasion(NPCSpawnInfo spawnInfo)
         {

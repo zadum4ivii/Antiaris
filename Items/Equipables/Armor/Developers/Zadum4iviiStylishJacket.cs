@@ -59,7 +59,6 @@ namespace Antiaris.Items.Equipables.Armor.Developers
                 player.buffImmune[80] = true;
                 player.buffImmune[144] = true;
                 player.maxMinions += 999;
-				AntiarisPlayer.spellFail = 0;
             }
         }
     }

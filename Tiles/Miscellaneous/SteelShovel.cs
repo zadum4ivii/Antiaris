@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Antiaris.Tiles.Miscellaneous
 {
@@ -26,10 +27,7 @@ namespace Antiaris.Tiles.Miscellaneous
 
         public override void KillMultiTile(int i, int j, int frameX, int frameY)
         {
-            int drop = 0;
-            drop = Item.NewItem(i * 16, j * 16, 32, 16, mod.ItemType("SteelShovel"), 1, false, 0, false, false);
-            if (Main.netMode == 1 && drop >= 0)
-                NetMessage.SendData(21, -1, -1, (NetworkText)null, drop, 1f, 0.0f, 0.0f, 0, 0, 0);
+            Item.NewItem(i * 16, j * 16, 34, 34, mod.ItemType("SteelShovel"), 1, false, 0, false, false);
         }
 
         public override void MouseOver(int i, int j)
@@ -39,10 +37,5 @@ namespace Antiaris.Tiles.Miscellaneous
 			player.showItemIcon = true;
 			player.showItemIcon2 = mod.ItemType("SteelShovel");
 		}
-
-        public override void RightClick(int x, int y)
-		{
-	        WorldGen.KillTile(x, y, false, false, false);
-        }
     }
 }

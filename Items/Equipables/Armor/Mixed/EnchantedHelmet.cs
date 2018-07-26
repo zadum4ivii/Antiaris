@@ -48,7 +48,6 @@ namespace Antiaris.Items.Equipables.Armor.Mixed
             player.setBonus = EnchantedSetBonus;
             var aPlayer = player.GetModPlayer<AntiarisPlayer>(mod);
             aPlayer.enchantedSet = true;
-			AntiarisPlayer.spellFail -= 5;
         }
 
         public override void ArmorSetShadows(Player player)

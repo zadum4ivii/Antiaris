@@ -16,7 +16,7 @@ namespace Antiaris.Projectiles.Ranged
             projectile.penetrate = 8;
             projectile.aiStyle = 92;
             projectile.friendly = true;
-            projectile.timeLeft = 110;
+            projectile.timeLeft = 90;
             projectile.alpha = 100;
         }
 

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -10,17 +9,21 @@ namespace Antiaris
 {
     public class AntiarisItems : GlobalItem
     {
-        const string JungleSet = "antiaris_jungleSet";
-        const string MeteorSet = "antiaris_meteorSet";
-        const string CobaltSet = "antiaris_cobaltSet";
-        const string PalladiumSet = "antiaris_palladiumSet";
-        const string MythrilSet = "antiaris_mythrilSet";
-        const string OrichalcumSet = "antiaris_orichalcumSet";
-        const string AdamantiteSet = "antiaris_adamantiteSet";
-        const string TitaniumSet = "antiaris_titaniumSet";
-        const string ChlorophyteSet = "antiaris_chlorophyteSet";
-        const string SpectreSet = "antiaris_spectreSet";
-        const string NebulaSet = "antiaris_nebulaSet";
+        public override bool InstancePerEntity
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override bool CloneNewInstances
+        {
+            get
+            {
+                return true;
+            }
+        }
 
         internal static readonly int[] Placeables = { 
 		/*Paint*/ 1073, 1074, 1075, 1076, 1077, 1078, 1079, 1080, 1081, 1082, 1083, 1084, 1085, 1086, 1087, 1088, 1089, 1090, 1091, 1092, 1093, 1094, 1095, 1096, 1097, 1098, 1099, 1966, 1967, 1968, 
@@ -76,74 +79,124 @@ namespace Antiaris
 
         public override void ModifyTooltips(Item item, List<TooltipLine> list)
         {
-			int spellBonus = 0;
-			string SpellFail = Language.GetTextValue("Mods.Antiaris.SpellFail");
-			if (Config.WeaponFails && item.magic && item.mana >= 0 && item.shoot > 0)
+            var player = Main.player[Main.myPlayer];
+            if (item.type == ItemID.LifeCrystal)
             {
-                int pos = +2;
-                for (int k = 0; k < list.Count; ++k)
-                    if (list[k].Name.Equals("ItemDamage"))
-                    {
-                        pos = k;
-                        break;
-                    }
-                list.Insert(pos + 1, new TooltipLine(mod, "SpellFail", (AntiarisPlayer.spellFail + item.GetGlobalItem<InstancedAntiarisItems>().spellFail) + SpellFail));
+                int lifeCrystalUses = 0;
+                if (player.statLifeMax < 300)
+                    lifeCrystalUses = (300 - player.statLifeMax) / 20;
+                else
+                    lifeCrystalUses = 0;
+
+                if (lifeCrystalUses > 0)
+                {
+                    TooltipLine line = new TooltipLine(mod, "LifeCrystal", (Language.GetTextValue("Mods.Antiaris.LifeCrystalCanUse", lifeCrystalUses.ToString())));
+                    list.Add(line);
+                }
+
+                if (lifeCrystalUses == 0)
+                {
+                    TooltipLine line2 = new TooltipLine(mod, "LifeCrystal", (Language.GetTextValue("Mods.Antiaris.LifeCrystalNoUse")));
+                    list.Add(line2);
+                    TooltipLine line3 = new TooltipLine(mod, "LifeCrystal", (Language.GetTextValue("Mods.Antiaris.LifeCrystalNoUse2")));
+                    list.Add(line3);
+                }
             }
-			if(Config.WeaponFails && !item.social)
-			{
-				switch (item.type)
-				{
-					case ItemID.AmethystRobe:
-						spellBonus = 1;
-						TooltipLine line = new TooltipLine(mod, "SapphireRobe", (Language.GetTextValue("Mods.Antiaris.SpellFailBonus2", spellBonus.ToString())));
-						list.Add(line);
-						return;
-					case ItemID.TopazRobe:
-						spellBonus = 2;
-						TooltipLine line1 = new TooltipLine(mod, "SapphireRobe", (Language.GetTextValue("Mods.Antiaris.SpellFailBonus2", spellBonus.ToString())));
-						list.Add(line1);
-						return;
-					case ItemID.SapphireRobe:
-						spellBonus = 3;
-						TooltipLine line2 = new TooltipLine(mod, "SapphireRobe", (Language.GetTextValue("Mods.Antiaris.SpellFailBonus2", spellBonus.ToString())));
-						list.Add(line2);
-						return;
-					case ItemID.EmeraldRobe:
-						spellBonus = 4;
-						TooltipLine line3 = new TooltipLine(mod, "SapphireRobe", (Language.GetTextValue("Mods.Antiaris.SpellFailBonus2", spellBonus.ToString())));
-						list.Add(line3);
-						return;
-					case ItemID.RubyRobe:
-						spellBonus = 5;
-						TooltipLine line4 = new TooltipLine(mod, "SapphireRobe", (Language.GetTextValue("Mods.Antiaris.SpellFailBonus2", spellBonus.ToString())));
-						list.Add(line4);
-						return;
-					case ItemID.DiamondRobe:
-						spellBonus = 6;
-						TooltipLine line5 = new TooltipLine(mod, "SapphireRobe", (Language.GetTextValue("Mods.Antiaris.SpellFailBonus2", spellBonus.ToString())));
-						list.Add(line5);
-						return;
-					case ItemID.GypsyRobe:
-						spellBonus = 6;
-						TooltipLine line6 = new TooltipLine(mod, "SapphireRobe", (Language.GetTextValue("Mods.Antiaris.SpellFailBonus2", spellBonus.ToString())));
-						list.Add(line6);
-						return;
-					case ItemID.WizardHat:
-						spellBonus = 3;
-						TooltipLine line7 = new TooltipLine(mod, "SapphireRobe", (Language.GetTextValue("Mods.Antiaris.SpellFailBonus2", spellBonus.ToString())));
-						list.Add(line7);
-						return;
-					case ItemID.MagicHat:
-						spellBonus = 2;
-						TooltipLine line8 = new TooltipLine(mod, "SapphireRobe", (Language.GetTextValue("Mods.Antiaris.SpellFailBonus2", spellBonus.ToString())));
-						list.Add(line8);
-						return;
-				}
-			}	
+
+            if (item.type == mod.ItemType("BlazingHeart"))
+            {
+                int blazingHeartsUses = 0;
+                if (player.statLifeMax < 400)
+                    blazingHeartsUses = (400 - player.statLifeMax) / 10;
+                else
+                    blazingHeartsUses = 0;
+
+                if (player.statLifeMax < 300)
+                {
+                    TooltipLine line = new TooltipLine(mod, "BlazingHeart", (Language.GetTextValue("Mods.Antiaris.BlazingHeartCantUse")));
+                    list.Add(line);
+                }
+
+                if (blazingHeartsUses > 0 && player.statLifeMax >= 300)
+                {
+                    TooltipLine line = new TooltipLine(mod, "BlazingHeart", (Language.GetTextValue("Mods.Antiaris.BlazingHeartCanUse", blazingHeartsUses.ToString())));
+                    list.Add(line);
+                }
+
+                if (blazingHeartsUses == 0)
+                {
+                    TooltipLine line2 = new TooltipLine(mod, "BlazingHeart", (Language.GetTextValue("Mods.Antiaris.BlazingHeartNoUse")));
+                    list.Add(line2);
+                    TooltipLine line3 = new TooltipLine(mod, "BlazingHeart", (Language.GetTextValue("Mods.Antiaris.BlazingHeartNoUse2")));
+                    list.Add(line3);
+                }
+            }
+
+            if (item.type == mod.ItemType("DazzlingHeart"))
+            {
+                int dazzlingHeartUses = 0;
+                if (player.statLifeMax < 450)
+                    dazzlingHeartUses = (450 - player.statLifeMax) / 5;
+                else
+                    dazzlingHeartUses = 0;
+
+                if (player.statLifeMax < 400)
+                {
+                    TooltipLine line = new TooltipLine(mod, "DazzlingHeart", (Language.GetTextValue("Mods.Antiaris.DazzlingHeartCantUse")));
+                    list.Add(line);
+                }
+
+                if (dazzlingHeartUses > 0 && player.statLifeMax >= 400)
+                {
+                    TooltipLine line = new TooltipLine(mod, "DazzlingHeart", (Language.GetTextValue("Mods.Antiaris.DazzlingHeartCanUse", dazzlingHeartUses.ToString())));
+                    list.Add(line);
+                }
+
+                if (dazzlingHeartUses == 0)
+                {
+                    TooltipLine line2 = new TooltipLine(mod, "DazzlingHeart", (Language.GetTextValue("Mods.Antiaris.DazzlingHeartNoUse")));
+                    list.Add(line2);
+                    TooltipLine line3 = new TooltipLine(mod, "DazzlingHeart", (Language.GetTextValue("Mods.Antiaris.DazzlingHeartNoUse2")));
+                    list.Add(line3);
+                }
+            }
+
+            if (item.type == ItemID.LifeFruit)
+            {
+                int lifeFruitUses = 0;
+                if (player.statLifeMax < 450)
+                    lifeFruitUses = (500 - player.statLifeMax) / 5;
+                else
+                    lifeFruitUses = 0;
+
+                if (player.statLifeMax < 450)
+                {
+                    TooltipLine line = new TooltipLine(mod, "LifeFruit", (Language.GetTextValue("Mods.Antiaris.LifeFruitCantUse")));
+                    list.Add(line);
+                }
+
+                if (lifeFruitUses > 0 && player.statLifeMax >= 450)
+                {
+                    TooltipLine line = new TooltipLine(mod, "LifeFruit", (Language.GetTextValue("Mods.Antiaris.LifeFruitCanUse", lifeFruitUses.ToString())));
+                    list.Add(line);
+                }
+
+                if (lifeFruitUses == 0)
+                {
+                    TooltipLine line2 = new TooltipLine(mod, "LifeFruit", (Language.GetTextValue("Mods.Antiaris.LifeFruitNoUse")));
+                    list.Add(line2);
+                }
+            }	
         }
 
+        private int heal;
         public override void SetDefaults(Item item)
         {
+            if (item.healLife > 0)
+            {
+                heal = item.healLife;
+            }
+
             if (Placeables.Contains(item.type))
             {
                 item.useTurn = true;
@@ -581,21 +634,6 @@ namespace Antiaris
             }
         }
 
-        public override bool Shoot(Item item, Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
-		{
-			string SpellFailText = Language.GetTextValue("Mods.Antiaris.SpellFailText");
-			const int constChance = 100;
-			if (Config.WeaponFails && item.magic && item.mana >= 0 && item.shoot > 0 && Main.rand.Next(constChance) <= AntiarisPlayer.spellFail)
-			{
-                Vector2 perturbedSpeed = new Vector2(speedX, speedY).RotatedByRandom(MathHelper.ToRadians(Main.rand.Next(0, 360)));
-                speedX = perturbedSpeed.X;
-                speedY = perturbedSpeed.Y;
-                player.itemAnimation = 0;
-                CombatText.NewText(new Rectangle((int)player.position.X, (int)player.position.Y, player.width, player.height), Color.White, SpellFailText, false, false);
-			}
-			return true;
-		}
-
         public override void PostUpdate(Item item)
         {			
             if ((item.wet || item.lavaWet) && item.type == 23)
@@ -612,139 +650,19 @@ namespace Antiaris
             }
         }
 
-        public override void UpdateEquip(Item item, Player player)
-		{
-			if(Config.WeaponFails)
-			{
-				switch(item.type)
-				{
-					case ItemID.AmethystRobe:
-						AntiarisPlayer.spellFail -= 1;
-						return;
-					case ItemID.TopazRobe:
-						AntiarisPlayer.spellFail -= 2;
-						return;
-					case ItemID.SapphireRobe:
-						AntiarisPlayer.spellFail -= 3;
-						return;
-					case ItemID.EmeraldRobe:
-						AntiarisPlayer.spellFail -= 4;
-						return;
-					case ItemID.RubyRobe:
-						AntiarisPlayer.spellFail -= 5;
-						return;
-					case ItemID.DiamondRobe:
-						AntiarisPlayer.spellFail -= 6;
-						return;
-					case ItemID.GypsyRobe:
-						AntiarisPlayer.spellFail -= 6;
-						return;
-					case ItemID.WizardHat:
-						AntiarisPlayer.spellFail -= 3;
-						return;
-					case ItemID.MagicHat:
-						AntiarisPlayer.spellFail -= 2;
-						return;
-				}
-			}
-		}
-
-        public override string IsArmorSet(Item head, Item body, Item legs)
-		{
-			if(head.type == ItemID.JungleHat && body.type == ItemID.JungleShirt && legs.type == ItemID.JunglePants)
-				return JungleSet;
-			if(head.type == ItemID.MeteorHelmet && body.type == ItemID.MeteorSuit && legs.type == ItemID.MeteorLeggings)
-				return MeteorSet;
-			if(head.type == ItemID.CobaltHat && body.type == ItemID.CobaltBreastplate && legs.type == ItemID.CobaltLeggings)
-				return CobaltSet;
-			if(head.type == ItemID.PalladiumHeadgear && body.type == ItemID.PalladiumBreastplate && legs.type == ItemID.PalladiumLeggings)
-				return PalladiumSet;
-			if(head.type == ItemID.MythrilHood && body.type == ItemID.MythrilChainmail && legs.type == ItemID.MythrilGreaves)
-				return MythrilSet;
-			if(head.type == ItemID.OrichalcumHeadgear && body.type == ItemID.OrichalcumBreastplate && legs.type == ItemID.OrichalcumLeggings)
-				return OrichalcumSet;
-			if(head.type == ItemID.AdamantiteHeadgear && body.type == ItemID.AdamantiteBreastplate && legs.type == ItemID.AdamantiteLeggings)
-				return AdamantiteSet;
-			if(head.type == ItemID.TitaniumHeadgear && body.type == ItemID.TitaniumBreastplate && legs.type == ItemID.TitaniumLeggings)
-				return TitaniumSet;
-			if(head.type == ItemID.ChlorophyteHeadgear && body.type == ItemID.ChlorophytePlateMail && legs.type == ItemID.ChlorophyteGreaves)
-				return ChlorophyteSet;
-			if((head.type == ItemID.SpectreMask || head.type == ItemID.SpectreHood) && body.type == ItemID.SpectreRobe && legs.type == ItemID.SpectrePants)
-				return SpectreSet;
-			if(head.type == ItemID.NebulaHelmet && body.type == ItemID.NebulaBreastplate && legs.type == ItemID.NebulaLeggings)
-				return NebulaSet;
-			
-			return base.IsArmorSet(head, body, legs);
-		}
-
-        public override void UpdateArmorSet(Player player, string armorSet)
-		{          
-			if(Config.WeaponFails && armorSet == JungleSet)
-			{
-				int spellBonus = 9;
-				AntiarisPlayer.spellFail -= 9;
-				player.setBonus = player.setBonus + Language.GetTextValue("Mods.Antiaris.SpellFailBonus", spellBonus.ToString());
-			}
-			if(Config.WeaponFails && armorSet == MeteorSet)
-			{
-				int spellBonus = 9;
-				AntiarisPlayer.spellFail -= 9;
-				player.setBonus = player.setBonus + Language.GetTextValue("Mods.Antiaris.SpellFailBonus", spellBonus.ToString());
-			}
-			if(Config.WeaponFails && armorSet == CobaltSet)
-			{
-				int spellBonus = 10;
-				AntiarisPlayer.spellFail -= 10;
-				player.setBonus = player.setBonus + Language.GetTextValue("Mods.Antiaris.SpellFailBonus", spellBonus.ToString());
-			}
-			if(Config.WeaponFails && armorSet == PalladiumSet)
-			{
-				int spellBonus = 10;
-				AntiarisPlayer.spellFail -= 10;
-				player.setBonus = player.setBonus + Language.GetTextValue("Mods.Antiaris.SpellFailBonus", spellBonus.ToString());
-			}
-			if(Config.WeaponFails && armorSet == MythrilSet)
-			{
-				int spellBonus = 11;
-				AntiarisPlayer.spellFail -= 11;
-				player.setBonus = player.setBonus + Language.GetTextValue("Mods.Antiaris.SpellFailBonus", spellBonus.ToString());
-			}
-			if(Config.WeaponFails && armorSet == OrichalcumSet)
-			{
-				int spellBonus = 11;
-				AntiarisPlayer.spellFail -= 11;
-				player.setBonus = player.setBonus + Language.GetTextValue("Mods.Antiaris.SpellFailBonus", spellBonus.ToString());
-			}
-			if(Config.WeaponFails && armorSet == AdamantiteSet)
-			{
-				int spellBonus = 12;
-				AntiarisPlayer.spellFail -= 12;
-				player.setBonus = player.setBonus + Language.GetTextValue("Mods.Antiaris.SpellFailBonus", spellBonus.ToString());
-			}
-			if(Config.WeaponFails && armorSet == TitaniumSet)
-			{
-				int spellBonus = 12;
-				AntiarisPlayer.spellFail -= 12;
-				player.setBonus = player.setBonus + Language.GetTextValue("Mods.Antiaris.SpellFailBonus", spellBonus.ToString());
-			}
-			if(Config.WeaponFails && armorSet == ChlorophyteSet)
-			{
-				int spellBonus = 13;
-				AntiarisPlayer.spellFail -= 13;
-				player.setBonus = player.setBonus + Language.GetTextValue("Mods.Antiaris.SpellFailBonus", spellBonus.ToString());
-			}
-			if(Config.WeaponFails && armorSet == SpectreSet)
-			{
-				int spellBonus = 14;
-				AntiarisPlayer.spellFail -= 14;
-				player.setBonus = player.setBonus + Language.GetTextValue("Mods.Antiaris.SpellFailBonus", spellBonus.ToString());
-			}
-			if(Config.WeaponFails && armorSet == NebulaSet)
-			{
-				int spellBonus = 15;
-				AntiarisPlayer.spellFail -= 15;
-				player.setBonus = player.setBonus + Language.GetTextValue("Mods.Antiaris.SpellFailBonus", spellBonus.ToString());
-			}
-		}
+        public override void UpdateInventory(Item item, Player player)
+        {
+            if (item.healLife > 0)
+            {
+                if (player.GetModPlayer<AntiarisPlayer>(mod).healingBonus)
+                {
+                    item.healLife = (int)(heal * 1.15f);
+                }
+                else
+                {
+                    item.healLife = heal;
+                }
+            }
+        }
     }
 }

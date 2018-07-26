@@ -1,5 +1,6 @@
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.ID;
 
 namespace Antiaris.Items.Miscellaneous
 {
@@ -21,6 +22,10 @@ namespace Antiaris.Items.Miscellaneous
             item.height = 48;
             item.rare = 4;
             item.maxStack = 20;
+            item.useAnimation = 25;
+            item.useTime = 25;
+            item.useStyle = 1;
+            item.UseSound = SoundID.Item1;
         }
     }
 }

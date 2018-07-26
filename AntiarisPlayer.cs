@@ -6,9 +6,11 @@ using Antiaris.NPCs.Town;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.GameInput;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.Localization;
+using Antiaris.UIs;
 using Terraria.ModLoader;
 
 namespace Antiaris
@@ -16,7 +18,6 @@ namespace Antiaris
     public class AntiarisPlayer : ModPlayer
     {
         public static bool TrapsImmune = false;
-        public static int spellFail;
         public static bool questReady = true;
 
         private static double _pausedTime;
@@ -106,11 +107,9 @@ namespace Antiaris
         public bool necromancerSet = false;
         public bool OpenTargetUndeadMiner = false;
         public bool OpenWindow = false;
-        public bool OpenWindow2 = false;
         public bool OpenWindow3 = false;
         public bool OpenWindow4 = false;
         public bool parrot = false;
-        public byte QuestKills = 0;
         public bool RavenousSpores = false;
         public bool ringEquip = false;
         public bool roguesBelt = false;
@@ -139,8 +138,10 @@ namespace Antiaris
         public float timeToSpawn = 0.0f;
         public bool tLuck;
         public bool topazG;
-        public bool Tracker = true;
         public int VoltCharge = 0;
+        public bool brokenRod = false;
+
+        public bool healingBonus = false;
 
         public static double PausedTime
         {
@@ -152,6 +153,12 @@ namespace Antiaris
             {
                 _pausedTime = value;
             }
+        }
+		
+		public override void ProcessTriggers(TriggersSet triggersSet)
+        {
+            if (Antiaris.hideTracker.JustPressed)
+                QuestTrackerUI.visible = !QuestTrackerUI.visible;
         }
 
         public static bool TimePaused { get; set; }
@@ -184,9 +191,6 @@ namespace Antiaris
         public override void Initialize()
         {
             foundChest = false;
-			if (Main.expertMode)
-				spellFail = 30;
-			else spellFail = 25;
         }
 
         public override void ResetEffects()
@@ -240,9 +244,6 @@ namespace Antiaris
 			bloodsteal = false;
 			hitHeal = false;
 			critHeal = false;
-			if (Main.expertMode)
-				spellFail = 35;
-			else spellFail = 30;
 			manaPrism = false;
 			shadowflameCharm = false;
 			shadowflameImbue = false;
@@ -259,18 +260,14 @@ namespace Antiaris
 			hRing = false;
 			bitesTheDust = false;
 			questReady = false;
-		}
+            healingBonus = false;
+        }
 
         public override void OnEnterWorld(Player player)
         {
             string Information1 = Language.GetTextValue("Mods.Antiaris.Information1");
-			string Information2 = Language.GetTextValue("Mods.Antiaris.Information2");
             ModExplorer._initialize();
 			Main.NewText(Information1, 255, 194, 40);
-			if(Config.WeaponFails)
-			{
-				Main.NewText(Information2, 255, 194, 40);
-			}
         }
 
         public override void UpdateBadLifeRegen()
@@ -356,8 +353,10 @@ namespace Antiaris
 
         public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
 		{
-			if (electrified && damage == 10.0 && hitDirection == 0 && damageSource.SourceOtherIndex == 8) damageSource = PlayerDeathReason.ByOther(10);
-			return true;
+		    string InjuredDeath = Language.GetTextValue("Mods.Antiaris.InjuredDeath", Main.LocalPlayer.name);
+            if (electrified && damage == 10.0 && hitDirection == 0 && damageSource.SourceOtherIndex == 8) damageSource = PlayerDeathReason.ByOther(10);
+		    if (injured) damageSource = PlayerDeathReason.ByCustomReason(InjuredDeath);
+            return true;
 		}
 
         public override void PreUpdate()
@@ -811,16 +810,6 @@ namespace Antiaris
                     building = false;
                 }
             }
-            foreach (NPC npc in Main.npc)
-			{
-				for (var k = 0; k < 200; k++)
-                {
-                    if (Main.npc[k].lifeMax > 0 && Main.npc[k].active && Main.npc[k].boss && Config.WeaponFails)
-                    {
-						player.AddBuff(mod.BuffType("EvilPresence"), 60);
-                    }
-                }
-			}
             if (timer % 1 == 0)
             {
                 if (red > 35 && !change)
@@ -1196,6 +1185,11 @@ namespace Antiaris
                 player.rocketRelease = true;
                 //end vanilla code              
             }
+            var questSystem = Main.player[Main.myPlayer].GetModPlayer<QuestSystem>();
+            if (QuestSystem.BrokenRod && questSystem.CurrentQuest == -1)
+            {
+                QuestSystem.BrokenRod = false;
+            }
         }
 
         public override void SetupStartInventory(IList<Item> items)
@@ -1366,7 +1360,7 @@ namespace Antiaris
             {
                 thoriumBlunderbuss = true;
             }
-			if (player.inventory[player.selectedItem].type == mod.ItemType("GigaVolt"))
+            if (player.inventory[player.selectedItem].type == mod.ItemType("GigaVolt"))
             {
 				if (MinionType == -1)
 				{
@@ -1404,54 +1398,15 @@ namespace Antiaris
                 }
             }
 
-            if (player.inventory[player.selectedItem].type == mod.ItemType("EmeraldNet"))
+            int crystal = player.FindItem(mod.ItemType("GlacialCrystal"));
+            if (crystal != -1 && player.ZoneSnow)
             {
-                if (player.itemAnimation > 0)
+                player.AddBuff(BuffID.Chilled, 60);
+                if (player.wet && Main.expertMode)
                 {
-                    var FirstRectangle = new Rectangle((int)player.itemLocation.X, (int)player.itemLocation.Y, 70, 70);
-                    FirstRectangle.Width = (int)((float)FirstRectangle.Width * player.inventory[player.selectedItem].scale);
-                    FirstRectangle.Height = (int)((float)FirstRectangle.Height * player.inventory[player.selectedItem].scale);
-                    if (player.direction == -1)
-                    {
-                        FirstRectangle.X -= FirstRectangle.Width;
-                    }
-                    if (player.gravDir == 1f)
-                    {
-                        FirstRectangle.Y -= FirstRectangle.Height;
-                    }
-                    if ((double)player.itemAnimation < (double)player.itemAnimationMax * 0.333)
-                    {
-                        if (player.direction == -1)
-                        {
-                            FirstRectangle.X -= (int)((double)FirstRectangle.Width * 1.4 - (double)FirstRectangle.Width);
-                        }
-                        FirstRectangle.Width = (int)((double)FirstRectangle.Width * 1.4);
-                        FirstRectangle.Y += (int)((double)FirstRectangle.Height * 0.5 * (double)player.gravDir);
-                        FirstRectangle.Height = (int)((double)FirstRectangle.Height * 1.1);
-                    }
-                    else if ((double)player.itemAnimation >= (double)player.itemAnimationMax * 0.666)
-                    {
-                        if (player.direction == 1)
-                        {
-                            FirstRectangle.X -= (int)((double)FirstRectangle.Width * 1.2);
-                        }
-                        FirstRectangle.Width *= 2;
-                        FirstRectangle.Y -= (int)(((double)FirstRectangle.Height * 1.4 - (double)FirstRectangle.Height) * (double)player.gravDir);
-                        FirstRectangle.Height = (int)((double)FirstRectangle.Height * 1.4);
-                    }
-                    for (var k = 0; k < 200; k++)
-                    {
-                        if (Main.npc[k].active && Main.npc[k].catchItem > 0 && AntiarisPlayer.Slimes.Contains(Main.npc[k].type) && NPC.downedSlimeKing)
-                        {
-                            Rectangle SecondRectangle = new Rectangle((int)Main.npc[k].position.X, (int)Main.npc[k].position.Y, Main.npc[k].width, Main.npc[k].height);
-                            if (FirstRectangle.Intersects(SecondRectangle) && (Main.npc[k].noTileCollide || Collision.CanHit(player.position, player.width, player.height, Main.npc[k].position, Main.npc[k].width, Main.npc[k].height)))
-                            {
-                                NPC.CatchNPC(k, player.whoAmI);
-                            }
-                        }
-                    }
+                    player.AddBuff(BuffID.Frozen, 60);
                 }
-            }	
+            }
         }
 
         public override void ModifyHitByNPC(NPC npc, ref int damage, ref bool crit)
@@ -1489,7 +1444,7 @@ namespace Antiaris
 		{
 			if(crit && critHeal)
 			{
-				int newLife = Main.rand.Next(9,13);
+				int newLife = Main.rand.Next(4,6);
 				player.statLife += newLife;
 				player.HealEffect(newLife);
 				NetMessage.SendData(MessageID.SpiritHeal, -1, -1, null, player.whoAmI, newLife);
@@ -1511,13 +1466,13 @@ namespace Antiaris
 			}
 			float distanceTo = Vector2.Distance(player.Center, target.Center);
             float distance = 100.0f;
-			if (mRing && (double)distanceTo <= (double)distance)
+			if (mRing && (double)distanceTo <= (double)distance && target.life <= 0)
             {
                 int newMana = (int)(player.statManaMax2 * 0.15f);
                 player.statMana += newMana;
                 player.ManaEffect(newMana);
             }
-			if (hRing && (double)distanceTo <= (double)distance)
+			if (hRing && (double)distanceTo <= (double)distance && target.life <= 0)
             {
                 int newHealth = (int)(player.statLifeMax2 * 0.05f);
                 player.statLife += newHealth;
@@ -1638,6 +1593,24 @@ namespace Antiaris
             {
                 playSound = false;
                 Main.PlaySound(SoundID.NPCHit31, player.position);
+            }
+            string HarpyEggBroken = Language.GetTextValue("Mods.Antiaris.HarpyEggBroken", Main.LocalPlayer.name);
+            string eggDeathReason = damageSource.ToString();
+            string HarpyEggDeath = Language.GetTextValue("Mods.Antiaris.HarpyEggDeath", eggDeathReason);
+            int HarpyEgg = player.FindItem(mod.ItemType("HarpyEgg"));
+            if (HarpyEgg != -1)
+            {
+                if (Main.rand.Next(4) == 0)
+                {
+                    player.inventory[HarpyEgg].stack = 0;
+                    Main.PlaySound(3, (int)player.position.X, (int)player.position.Y, 1);
+                    Main.NewText(HarpyEggBroken, 255, 255, 255);
+                    Gore.NewGore(player.position, Main.rand.NextVector2Unit() * 2f, mod.GetGoreSlot("Gores/HarpyEggGore1"));
+                    Gore.NewGore(player.position, Main.rand.NextVector2Unit() * 2f, mod.GetGoreSlot("Gores/HarpyEggGore2"));
+                    Gore.NewGore(player.position, Main.rand.NextVector2Unit() * 2f, mod.GetGoreSlot("Gores/HarpyEggGore3"));
+                    Gore.NewGore(player.position, Main.rand.NextVector2Unit() * 2f, mod.GetGoreSlot("Gores/HarpyEggGore4"));
+                    Main.NewText(HarpyEggDeath, 187, 20, 20);
+                }
             }
             return base.PreHurt(pvp, quiet, ref damage, ref hitDirection, ref crit, ref customDamage, ref playSound, ref genGore, ref damageSource);
         }

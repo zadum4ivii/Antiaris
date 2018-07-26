@@ -44,7 +44,7 @@ namespace Antiaris.Items.Weapons.Melee.Swords
 
         public override void OnHitNPC(Player player, NPC target, int damage, float knockback, bool crit)
         {
-            int k = Projectile.NewProjectile(target.Center.X, target.Center.Y, 0f, 0f, mod.ProjectileType("LeafBush"), damage, knockback, player.whoAmI, 0.0f, 0.0f);
+            int k = Projectile.NewProjectile(target.Center.X, target.Center.Y, 0f, 0f, mod.ProjectileType("LeafBush"), damage / 3, knockback, player.whoAmI, 0.0f, 0.0f);
             Main.projectile[k].ranged = false; Main.projectile[k].melee = true;
         }
 

@@ -17,7 +17,7 @@ namespace Antiaris.Items.Consumables.Ammo.Buckshots
             item.ranged = true;
             item.consumable = true;
             item.knockBack = 2f;
-            item.ammo = mod.ItemType("GreenGoo");
+            item.ammo = mod.ItemType("Buckshot");
             item.value = Item.sellPrice(0, 0, 0, 6);
         }
 

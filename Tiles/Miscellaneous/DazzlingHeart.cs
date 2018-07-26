@@ -12,7 +12,6 @@ namespace Antiaris.Tiles.Miscellaneous
 	    public override void SetDefaults()
 		{
             Main.tileFrameImportant[Type] = true;
-			//Main.tileNoAttach[Type] = true;
 			Main.tileLighted[Type] = true;
 			TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
             TileObjectData.newTile.CoordinateHeights = new int[] { 16, 16 };

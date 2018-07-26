@@ -60,15 +60,26 @@ namespace Antiaris.NPCs.Enemies
         public override void AI()
         {
             npc.TargetClosest(true);
+            var player = Main.player[npc.target];
             npc.netUpdate = true;
             npc.spriteDirection = npc.direction;
             npc.rotation = npc.velocity.X * 0.1f;
-            if (Main.rand.Next(700) == 0)
+            if (npc.target < 0 || npc.target == 255 || player.dead || !player.active)
             {
-                Main.PlaySound(29, (int)npc.position.X, (int)npc.position.Y, Main.rand.Next(81, 84));
+                npc.TargetClosest(false);
+                if (npc.velocity.X > 0.0f)
+                    npc.velocity.X = npc.velocity.X + 0.75f;
+                else
+                    npc.velocity.X = npc.velocity.X - 0.75f;
+                npc.velocity.Y = npc.velocity.Y - 0.1f;
+                if (npc.timeLeft > 10)
+                {
+                    npc.timeLeft = 10;
+                    return;
+                }
             }
-            npc.TargetClosest(true);
-            var player = Main.player[npc.target];
+            if (Main.rand.Next(700) == 0)
+                Main.PlaySound(29, (int)npc.position.X, (int)npc.position.Y, Main.rand.Next(81, 84));
             var velocity = AntiarisHelper.VelocityToPoint(npc.Center, AntiarisHelper.RandomPointInArea(new Vector2(player.Center.X - 10, player.Center.Y - 10), new Vector2(player.Center.X + 20, player.Center.Y + 20)), 6);
             if (!player.active || player.dead)
             {

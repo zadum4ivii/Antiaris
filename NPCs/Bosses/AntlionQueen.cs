@@ -270,7 +270,7 @@ namespace Antiaris.NPCs.Bosses
                 npc.noTileCollide = true;
                 if (this.mv >= 150 && this.mv < 500)
                 {
-                    Vector2 vector2_1 = player.Center + new Vector2(0.0f, -400.0f);
+                    Vector2 vector2_1 = player.Center + new Vector2(0.0f, -600.0f);
                     float speed = 7f;
                     Vector2 vector2_2 = vector2_1 - npc.Center;
                     float distance = (float)Math.Sqrt((double)vector2_2.X * (double)vector2_2.X + (double)vector2_2.Y * (double)vector2_2.Y);
@@ -293,7 +293,7 @@ namespace Antiaris.NPCs.Bosses
                 }
                 else if (this.mv >= 650 && this.mv < 1000)
                 {
-                    Vector2 vector2_1 = player.Center + new Vector2(-400.0f, 0.0f);
+                    Vector2 vector2_1 = player.Center + new Vector2(-600.0f, 0.0f);
                     float speed = 7f;
                     Vector2 vector2_2 = vector2_1 - npc.Center;
                     float distance = (float)Math.Sqrt((double)vector2_2.X * (double)vector2_2.X + (double)vector2_2.Y * (double)vector2_2.Y);
@@ -316,7 +316,7 @@ namespace Antiaris.NPCs.Bosses
                 }
                 else if (this.mv >= 1150 && this.mv < 1500)
                 {
-                    Vector2 vector2_1 = player.Center + new Vector2(400.0f, 0.0f);
+                    Vector2 vector2_1 = player.Center + new Vector2(600.0f, 0.0f);
                     float speed = 7f;
                     Vector2 vector2_2 = vector2_1 - npc.Center;
                     float distance = (float)Math.Sqrt((double)vector2_2.X * (double)vector2_2.X + (double)vector2_2.Y * (double)vector2_2.Y);

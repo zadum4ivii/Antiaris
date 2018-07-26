@@ -83,7 +83,7 @@ namespace Antiaris
 		{
 			var player = Main.player[Main.myPlayer];
 			var aPlayer = player.GetModPlayer<AntiarisPlayer>(mod);
-			if (aPlayer.mirrorZone)
+			if (aPlayer.mirrorZone && (type == TileID.GrayBrick || type == TileID.DemoniteBrick || type == TileID.CrimtaneBrick))
 			{
 				return false;
 			}
@@ -122,27 +122,13 @@ namespace Antiaris
                     }
                 }
             }
-            if (type == TileID.WoodBlock && Main.netMode != 1)
-            {
-                var questSystem = Main.player[Main.myPlayer].GetModPlayer<QuestSystem>(mod);
-                if (questSystem.CurrentQuest == QuestItemID.Charcoal && Main.tile[i + 1, j].lava() || Main.tile[i - 1, j].lava() || Main.tile[i, j + 1].lava() || Main.tile[i, j - 1].lava() || Main.tile[i - 1, j - 1].lava() || Main.tile[i + 1, j - 1].lava() || Main.tile[i - 1, j + 1].lava() || Main.tile[i + 1, j + 1].lava())
-                {
-                    WorldGen.KillTile(i, j, false, false, true);
-                    if (Main.tile[i, j - 1].type == 21 || Main.tile[i + 1, j - 1].type == 21 || Main.tile[i - 1, j - 1].type == 21)
-                        tile = true;
-                    else
-                        tile = false;
-                    if (!tile)
-                        Item.NewItem((i + 1) * 16, (j - 2) * 16, 18, 18, mod.ItemType("Charcoal"), Main.rand.Next(1, 3), false, 0, false, false);
-                }
-            }
             return true;
         }
 
         public override void RandomUpdate(int i, int j, int type)
 		{
-			if (type == 117)
-			{
+            if (type == 117 || type == 116 || type == 164)
+            {
 				if(randomTiles.Contains(Framing.GetTileSafely(i, j - 1).type) && randomTiles.Contains(Framing.GetTileSafely(i, j - 2).type) && Main.hardMode)
 				{
 					if (Main.rand.Next(900) == 0 && (j >= (int)((double)Main.maxTilesY * 0.349999994039536) && j <= Main.maxTilesY - 300))
@@ -156,7 +142,7 @@ namespace Antiaris
 
         public override bool CanKillTile(int i, int j, int type, ref bool blockDamaged)
         {
-            if (Main.LocalPlayer.GetModPlayer<AntiarisPlayer>(mod).mirrorZone && type != 191) 
+            if (Main.LocalPlayer.GetModPlayer<AntiarisPlayer>(mod).mirrorZone && (type == TileID.GrayBrick || type == TileID.DemoniteBrick || type == TileID.CrimtaneBrick)) 
 			{
 				return false;
 			}

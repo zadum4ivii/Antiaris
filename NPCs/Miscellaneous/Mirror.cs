@@ -67,13 +67,74 @@ namespace Antiaris.NPCs.Miscellaneous
                 npc.homeTileY = -1;
                 npc.netUpdate = true;
             }
+
+                if (player.inventory[player.selectedItem].type == mod.ItemType("StoneHammer1") || player.inventory[player.selectedItem].type == mod.ItemType("StoneHammer2"))
+                {
+                    if (player.itemAnimation > 0)
+                    {
+                        var FirstRectangle = new Rectangle((int)player.itemLocation.X, (int)player.itemLocation.Y, 34, 34);
+                        FirstRectangle.Width = (int)((float)FirstRectangle.Width * player.inventory[player.selectedItem].scale);
+                        FirstRectangle.Height = (int)((float)FirstRectangle.Height * player.inventory[player.selectedItem].scale);
+                        if (player.direction == -1)
+                        {
+                            FirstRectangle.X -= FirstRectangle.Width;
+                        }
+                        if (player.gravDir == 1f)
+                        {
+                            FirstRectangle.Y -= FirstRectangle.Height;
+                        }
+                        if ((double)player.itemAnimation < (double)player.itemAnimationMax * 0.333)
+                        {
+                            if (player.direction == -1)
+                            {
+                                FirstRectangle.X -= (int)((double)FirstRectangle.Width * 1.4 - (double)FirstRectangle.Width);
+                            }
+                            FirstRectangle.Width = (int)((double)FirstRectangle.Width * 1.4);
+                            FirstRectangle.Y += (int)((double)FirstRectangle.Height * 0.5 * (double)player.gravDir);
+                            FirstRectangle.Height = (int)((double)FirstRectangle.Height * 1.1);
+                        }
+                        else if ((double)player.itemAnimation >= (double)player.itemAnimationMax * 0.666)
+                        {
+                            if (player.direction == 1)
+                            {
+                                FirstRectangle.X -= (int)((double)FirstRectangle.Width * 1.2);
+                            }
+                            FirstRectangle.Width *= 2;
+                            FirstRectangle.Y -= (int)(((double)FirstRectangle.Height * 1.4 - (double)FirstRectangle.Height) * (double)player.gravDir);
+                            FirstRectangle.Height = (int)((double)FirstRectangle.Height * 1.4);
+                        }
+                        Rectangle SecondRectangle = new Rectangle((int)npc.position.X, (int)npc.position.Y, npc.width, npc.height);
+                        if (FirstRectangle.Intersects(SecondRectangle) && (npc.noTileCollide || Collision.CanHit(player.position, player.width, player.height, npc.position, npc.width, npc.height)))
+                        {
+                            if (Main.netMode == NetmodeID.SinglePlayer)
+                                npc.Transform(mod.NPCType("BrokenMirror"));
+                            else
+                            {
+                                ModPacket packet = mod.GetPacket();
+                                packet.Write((byte)1);
+                                packet.Write(npc.whoAmI);
+                                packet.Send();
+                            }
+                            Main.PlaySound(13, (int)npc.position.X, (int)npc.position.Y, 0);
+                            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/StoneHammerGore1"), 1f);
+                            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/StoneHammerGore1"), 1f);
+                            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/StoneHammerGore2"), 1f);
+                            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/StoneHammerGore3"), 1f);
+                            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/StoneHammerGore3"), 1f);
+                            player.inventory[player.selectedItem].type = 0;
+                            if (Main.netMode != 1)
+                                NetMessage.SendData(23, -1, -1, null, npc.whoAmI, 0.0f, 0.0f, 0.0f, 0, 0, 0);
+                            return;
+                    }
+                    }
+                }
         }
 
-        public override void SetChatButtons(ref string button, ref string button2)
+        /*public override void SetChatButtons(ref string button, ref string button2)
         {
 			string MirrorBreak = Language.GetTextValue("Mods.Antiaris.MirrorBreak");
             button = MirrorBreak;
-        }
+        }*/
 
         public override string GetChat()
         {
@@ -81,7 +142,7 @@ namespace Antiaris.NPCs.Miscellaneous
 			return Mirror1;
         }
 
-        public override void OnChatButtonClicked(bool firstButton, ref bool shop)
+        /*public override void OnChatButtonClicked(bool firstButton, ref bool shop)
         {
 			string Mirror2 = Language.GetTextValue("Mods.Antiaris.Mirror2"); 
             if (firstButton)
@@ -136,7 +197,7 @@ namespace Antiaris.NPCs.Miscellaneous
                     }
 				}
             }
-        }
+        }*/
     }
 
     public enum Transform : byte

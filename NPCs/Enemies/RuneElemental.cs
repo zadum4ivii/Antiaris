@@ -56,9 +56,24 @@ namespace Antiaris.NPCs.Enemies
         public override void AI()
         {
             npc.TargetClosest(true);
+            Player player = Main.player[npc.target];
+            if (npc.target < 0 || npc.target == 255 || player.dead || !player.active)
+            {
+                npc.TargetClosest(false);
+                if (npc.velocity.X > 0.0f)
+                    npc.velocity.X = npc.velocity.X + 0.75f;
+                else
+                    npc.velocity.X = npc.velocity.X - 0.75f;
+                npc.velocity.Y = npc.velocity.Y + 0.1f;
+                if (npc.timeLeft > 10)
+                {
+                    npc.timeLeft = 10;
+                    return;
+                }
+            }
             Vector2 vector2 = new Vector2(npc.Center.X, npc.Center.Y);
-            float x = Main.player[npc.target].Center.X - vector2.X;
-            float y = Main.player[npc.target].Center.Y - vector2.Y;
+            float x = player.Center.X - vector2.X;
+            float y = player.Center.Y - vector2.Y;
             float distance = 6f / (float)Math.Sqrt((double)x * (double)x + (double)y * (double)y);
             float velocityX = x * distance;
             float velocityY = y * distance;

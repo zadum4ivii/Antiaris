@@ -22,7 +22,8 @@ namespace Antiaris.Tiles.Decorations
 			Main.tileValue[Type] = 500;
 			Main.tileTable[Type] = true;
             Main.tileSolidTop[Type] = true;
-			TileID.Sets.HasOutlines[Type] = true;
+		    AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTable);
+            TileID.Sets.HasOutlines[Type] = true;
 			TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
 			TileObjectData.newTile.Origin = new Point16(0, 1);
 			TileObjectData.newTile.CoordinateHeights = new int[] { 16, 18 };

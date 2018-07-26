@@ -772,15 +772,15 @@ namespace Antiaris
             var index = tasks.FindIndex(x => x.Name == "Planting Trees");
             if (index != -1)
             {
-                tasks.Add(new PassLegacy("[Antiaris] Snow House", AddSnowHouse));
                 tasks.Add(new PassLegacy("[Antiaris] Chest Finder", AddChestFinder));
                 tasks.Add(new PassLegacy("[Antiaris] Guide House", AddGuideHouse));
-				tasks.Add(new PassLegacy("[Antiaris] Cursed Tower", AddTower));
             }
             index = tasks.FindIndex(x => x.Name == "Micro Biomes");
             if (index != -1)
             {
+                tasks.Add(new PassLegacy("[Antiaris] Snow House", AddSnowHouse));
                 tasks.Add(new PassLegacy("[Antiaris] Submarine", AddSubmarine));
+                tasks.Add(new PassLegacy("[Antiaris] Cursed Tower", AddTower));
                 tasks.Add(new PassLegacy("[Antiaris] Pirate Boat", AddBoat));
             }
             index = tasks.FindIndex(genPass => genPass.Name == "Gems");
@@ -1000,7 +1000,7 @@ namespace Antiaris
                 int y = 200;
                 while (!WorldGen.SolidOrSlopedTile(i, y + 1))
                     y++;
-                for (int j = 0; j < 8; j++)
+                for (int j = 0; j < 26; j++)
                     if (WorldGen.SolidOrSlopedTile(i + j, y + 1) && (Main.tile[i + j, y + 1].type == 147 || Main.tile[i + j, y + 1].type == 161))
                         for (int k = 1; k < 10; k++)
                             if (!WorldGen.SolidOrSlopedTile(i - 1, y - k) && !WorldGen.SolidOrSlopedTile(i + 8, y - k))
@@ -1049,8 +1049,8 @@ namespace Antiaris
                             tile.active(true);
                             break;
 						case 5:
-                            WorldGen.PlaceTile(SnowHousePositionX + X, SnowHousePositionY - Y, TileID.Platforms, true, true, -1, 19);
-                            WorldGen.SlopeTile(SnowHousePositionX + X, SnowHousePositionY - Y, -1);
+                            WorldGen.KillTile(SnowHousePositionX + X, SnowHousePositionY - Y);
+                            WorldGen.PlaceTile(SnowHousePositionX + X, SnowHousePositionY - Y, TileID.Platforms, false, false, -1, 19);
                             break;
 						case 6:
                             tile.type = 51;
@@ -1891,16 +1891,11 @@ namespace Antiaris
                 int y = 200;
                 while (!WorldGen.SolidOrSlopedTile(i, y + 1))
                     y++;
-                bool flag = true;
-                for (int j = 0; j < 8; j++)
-                    if (!WorldGen.SolidOrSlopedTile(i + j, y + 1) || Main.tile[i + j, y + 1].type != (ushort)(!WorldGen.crimson ? 23 : 199))
-                        flag = false;
-                if (flag)
-                    for (int k = 1; k < 10; k++)
-                        if (WorldGen.SolidOrSlopedTile(i - 1, y - k) || WorldGen.SolidOrSlopedTile(i + 8, y - k))
-                            flag = false;
-                if (flag)
-                    list.Add(new Point(i, y));
+                for (int j = 0; j < 15; j++)
+                    if (WorldGen.SolidOrSlopedTile(i + j, y + 1) && Main.tile[i + j, y + 1].type == (ushort)(!WorldGen.crimson ? 23 : 199))
+                        for (int k = 1; k < 10; k++)
+                            if (!WorldGen.SolidOrSlopedTile(i - 1, y - k) && !WorldGen.SolidOrSlopedTile(i + 8, y - k))
+                                list.Add(new Point(i, y));
             }
             if (list.Count > 0)
             {

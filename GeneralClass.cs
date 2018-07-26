@@ -51,28 +51,28 @@ namespace Antiaris
 		{
 			if (item.type == 29)
 		    {
-				if (player.statLifeMax2 < 300)
+				if (player.statLifeMax < 300)
 					return true;
 			    else
 					return false;
 			}
 			if (item.type == mod.ItemType("BlazingHeart"))
 			{
-				if (player.statLifeMax2 >= 300 && player.statLifeMax2 < 400)
+				if (player.statLifeMax >= 300 && player.statLifeMax < 400)
 					return true;
 			    else
 					return false;
 			}
 			if (item.type == mod.ItemType("DazzlingHeart"))
 			{
-				if (player.statLifeMax2 >= 400 && player.statLifeMax2 < 450)
+				if (player.statLifeMax >= 400 && player.statLifeMax < 450)
 					return true;
 			    else
 					return false;
 			}
 			if (item.type == 1291)
 			{
-				if (player.statLifeMax2 >= 450 && player.statLifeMax2 < 500)
+				if (player.statLifeMax >= 450 && player.statLifeMax < 500)
 					return true;
 			    else
 					return false;

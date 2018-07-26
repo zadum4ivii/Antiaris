@@ -1,4 +1,5 @@
-﻿using Antiaris.NPCs.Town;
+﻿using Antiaris.Items.Placeables.Decorations;
+using Antiaris.NPCs.Town;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -32,12 +33,28 @@ namespace Antiaris.Items.Consumables.Miscellaneous
 			Tooltip.AddTranslation(GameCulture.Chinese, "改变冒险家的任务");
         }
 
+        public override bool CanUseItem(Player player)
+        {
+            bool noQuest = false;
+            if (player.GetModPlayer<QuestSystem>(mod).CurrentQuest == -1)
+                noQuest = true;
+            return !noQuest;
+        }
+
         public override bool UseItem(Player player)
         {
-            if (!player.GetModPlayer<QuestSystem>(mod).CompletedToday && player.GetModPlayer<QuestSystem>(mod).CurrentQuest >= 0 && player.GetModPlayer<QuestSystem>(mod).CurrentQuest != -1 && player.GetModPlayer<QuestSystem>(mod).CurrentQuest != 19)
-                player.GetModPlayer<QuestSystem>(mod).CurrentQuest += 1;
-            else if (player.GetModPlayer<QuestSystem>(mod).CurrentQuest == 19)
-                player.GetModPlayer<QuestSystem>(mod).CurrentQuest = 0;
+            if (!player.GetModPlayer<QuestSystem>(mod).CompletedToday && player.GetModPlayer<QuestSystem>(mod).CurrentQuest >= 0 && player.GetModPlayer<QuestSystem>(mod).CurrentQuest != -1)
+            { 
+                int quest = Main.rand.Next(19);
+                if (quest != 6 && quest != 12 && quest != 16 && quest != 18)
+                {
+                    player.GetModPlayer<QuestSystem>(mod).CurrentQuest = quest;
+                }
+                else
+                {
+                    player.GetModPlayer<QuestSystem>(mod).CurrentQuest = 5;
+                }
+            }
             return true;
         }
     }

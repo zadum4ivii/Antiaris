@@ -42,7 +42,6 @@ namespace Antiaris.Items.Equipables.Armor.Magic
 
         public override void UpdateArmorSet(Player player)
         {
-			AntiarisPlayer.spellFail -= 5;
             player.manaCost -= 0.1f;
             player.statManaMax2 += 30;
     		string SorcererSetBonus = Language.GetTextValue("Mods.Antiaris.SorcererSetBonus");

@@ -8,7 +8,6 @@ namespace Antiaris
 	public static class Config
 	{
 	    const string QuestIconDrawKey = "Quest Tracker";
-	    const string WeaponFailsKey = "Weapon Fails";
 	    static string ConfigPath = Path.Combine(Main.SavePath, "Mod Configs", "Antiaris.json");
 	    static string OldConfigFolderPath = Path.Combine(Main.SavePath, "Mod Configs", "Antiaris");
 	    static string OldConfigPath = Path.Combine(OldConfigFolderPath, "config.json");
@@ -17,7 +16,6 @@ namespace Antiaris
 	    static readonly Preferences Settings = new Preferences(ConfigPath);
 
 	    public static bool QuestIconDraw = true;
-	    public static bool WeaponFails = true;
 
 	    public static void Load()
 		{
@@ -45,7 +43,6 @@ namespace Antiaris
 			if(Settings.Load())
 			{
 				Settings.Get(QuestIconDrawKey, ref QuestIconDraw);
-				Settings.Get(WeaponFailsKey, ref WeaponFails);
 				return true;
 			}
 			return false;
@@ -55,7 +52,6 @@ namespace Antiaris
 		{
 			Settings.Clear();
 			Settings.Put(QuestIconDrawKey, QuestIconDraw);
-			Settings.Put(WeaponFailsKey, WeaponFails);
 			Settings.Save();
 		}
 
@@ -65,7 +61,6 @@ namespace Antiaris
             {
                 var data = new BitsByte();
                 data[0] = QuestIconDraw;
-                data[1] = WeaponFails;
                 writer.Write((byte)data);
             }
 
@@ -74,7 +69,6 @@ namespace Antiaris
                 SaveConfig();
                 var data = (BitsByte)reader.ReadByte();
                 QuestIconDraw = data[0];
-                WeaponFails = data[1];
             }
         }
 

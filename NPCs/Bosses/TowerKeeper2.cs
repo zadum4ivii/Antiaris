@@ -90,7 +90,7 @@ namespace Antiaris.NPCs.Bosses
                 }
 				if (Main.rand.Next(7) == 0)
                 {
-                    Item.NewItem((int)npc.position.X, (int)npc.position.Y, npc.width, npc.height, mod.ItemType("GuardianHeart"), 1, false, 0, false, false);
+                    Item.NewItem((int)npc.position.X, (int)npc.position.Y, npc.width, npc.height, mod.ItemType("GuardianHeart2"), 1, false, 0, false, false);
                 }
             }
             if (Main.rand.Next(10) == 0)

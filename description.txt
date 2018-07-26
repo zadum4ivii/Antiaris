@@ -3,7 +3,7 @@ Antiaris is a new project from part of team which made Tremor Mod. The differenc
 Our team is trying to make the game bigger and make the player feel more interested in game.
 
 [i/s1:75] [c/51DA5F:What does this mod add to the game?]
-[c/51DA5F:●] 418 Items
+[c/51DA5F:●] 423 Items
 [c/51DA5F:●] 24 Mobs
 [c/51DA5F:●] 1 Town NPC
 [c/51DA5F:●] 2 Bosses

@@ -39,7 +39,6 @@ namespace Antiaris.Items.Equipables.Armor.Magic
 
         public override void UpdateArmorSet(Player player)
         {
-			AntiarisPlayer.spellFail -= 3;
             player.statManaMax2 += 20;
             string DiscipleSetBonus = Language.GetTextValue("Mods.Antiaris.DiscipleSetBonus");
             player.setBonus = DiscipleSetBonus;

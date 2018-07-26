@@ -18,11 +18,11 @@ namespace Antiaris.Items.Equipables.Accessories
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Chest Finder");
-            Tooltip.SetDefault("Reveals nearby wooden and gold chests on map when worn");
+            Tooltip.SetDefault("Reveals nearby wooden and gold chests on map");
             DisplayName.AddTranslation(GameCulture.Chinese, "箱子搜寻者");
             Tooltip.AddTranslation(GameCulture.Chinese, "显示附近的木箱子和金箱子");
             DisplayName.AddTranslation(GameCulture.Russian, "Поисковик сундуков");
-            Tooltip.AddTranslation(GameCulture.Russian, "Когда надет, отображает ближайшие деревянные и золотые сундуки на карте");
+            Tooltip.AddTranslation(GameCulture.Russian, "Отображает ближайшие деревянные и золотые сундуки на карте");
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
