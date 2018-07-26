@@ -133,16 +133,13 @@ namespace Antiaris.NPCs.Town
 				quest = new ItemQuest(Name15 + "\n\n" + Quest15, mod.ItemType("Coconut"), 16, 1d);
 				quest.Reward = "";
                 Quests.Add(quest);
-
-                if (Antiaris.TerrariaOverhaul != null)
-                {
-                    quest = new ItemQuest(Name16 + "\n\n" + Quest16, Antiaris.TerrariaOverhaul.ItemType("Charcoal"), 25, 999d);
-                    quest.IsAvailable = () => (Antiaris.TerrariaOverhaul != null);
-                    quest.Reward = "";
-                    Quests.Add(quest);
-                }
-
-                quest = new ItemQuest(Name17 + "\n\n" + Quest17, mod.ItemType("SpiderMass"), 12, 1d);
+				
+				quest = new ItemQuest(Name16 + "\n\n" + Quest16, Antiaris.TerrariaOverhaul.ItemType("Charcoal"), 25, 1d);
+                quest.IsAvailable = () => (Antiaris.TerrariaOverhaul != null);
+                quest.Reward = "";
+                Quests.Add(quest);
+				
+				quest = new ItemQuest(Name17 + "\n\n" + Quest17, mod.ItemType("SpiderMass"), 12, 1d);
 				quest.Reward = "";
                 Quests.Add(quest);
 				
