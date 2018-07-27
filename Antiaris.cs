@@ -43,7 +43,6 @@ namespace Antiaris
 
         public Antiaris()
         {
-			Config.Load();
             Properties = new ModProperties()
             {
                 Autoload = true,

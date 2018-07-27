@@ -131,7 +131,7 @@ namespace Antiaris
             {
 				if(randomTiles.Contains(Framing.GetTileSafely(i, j - 1).type) && randomTiles.Contains(Framing.GetTileSafely(i, j - 2).type) && Main.hardMode)
 				{
-					if (Main.rand.Next(900) == 0 && (j >= (int)((double)Main.maxTilesY * 0.349999994039536) && j <= Main.maxTilesY - 300))
+					if (Main.rand.Next(700) == 0 && (j >= (int)((double)Main.maxTilesY * 0.349999994039536) && j <= Main.maxTilesY - 300))
 					{
 						WorldGen.PlaceObject(i - 1, j - 1, mod.TileType("DazzlingHeart"));
 						NetMessage.SendObjectPlacment(-1, i - 1, j - 1, mod.TileType("DazzlingHeart"), 0, 0, -1, -1);

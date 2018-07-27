@@ -37,7 +37,7 @@ namespace Antiaris.Items.Placeables.Bonuses
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.PearlstoneBlock, 20);
             recipe.AddIngredient(ItemID.Glass, 6);
-            recipe.AddIngredient(null, "BlazingHeart");
+            recipe.AddIngredient(null, "DazzlingHeart");
             recipe.SetResult(this);
             recipe.AddRecipe();
         }

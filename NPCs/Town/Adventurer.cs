@@ -300,7 +300,7 @@ namespace Antiaris.NPCs.Town
                 spriteBatch.Draw(texture3, position, null, Color.White, 0, origin, npc.scale * 1.2f, SpriteEffects.None, 0.0f);
             }
             if (nightmare) return;
-            if (questSystem.CurrentQuest == -1 && Config.QuestIconDraw && !questSystem.CompletedToday)
+            if (questSystem.CurrentQuest == -1 && !questSystem.CompletedToday)
             {
                 if (texture == null) return;
                 Vector2 origin = new Vector2(texture.Width / 2, texture.Height / 2);

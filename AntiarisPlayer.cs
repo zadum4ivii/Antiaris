@@ -1519,13 +1519,13 @@ namespace Antiaris
 			}
 			float distanceTo = Vector2.Distance(player.Center, target.Center);
             float distance = 100.0f;
-			if (mRing && (double)distanceTo <= (double)distance)
+			if (mRing && (double)distanceTo <= (double)distance && target.life <= 0)
             {
                 int newMana = (int)(player.statManaMax2 * 0.15f);
                 player.statMana += newMana;
                 player.ManaEffect(newMana);
             }
-			if (hRing && (double)distanceTo <= (double)distance)
+			if (hRing && (double)distanceTo <= (double)distance && target.life <= 0)
             {
                 int newHealth = (int)(player.statLifeMax2 * 0.05f);
                 player.statLife += newHealth;

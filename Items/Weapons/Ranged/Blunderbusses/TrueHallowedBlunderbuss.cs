@@ -61,11 +61,6 @@ namespace Antiaris.Items.Weapons.Ranged.Blunderbusses
 
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
 		{
-			Vector2 muzzleOffset = Vector2.Normalize(new Vector2(speedX, speedY)) * 85f;
-			if (Collision.CanHit(position, 0, 0, position + muzzleOffset, 0, 0))
-			{
-				position += muzzleOffset;
-			}
             if (Main.rand.Next(3) == 0)
             {
                 Projectile.NewProjectile(position.X, position.Y, speedX * 1.4f, speedY * 1.4f, mod.ProjectileType("TrueBuckshot1"), damage + 15, knockBack + 2.0f, player.whoAmI);
