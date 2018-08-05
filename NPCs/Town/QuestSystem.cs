@@ -18,6 +18,40 @@ namespace Antiaris.NPCs.Town
 	    public int QuestKills = 0;
 	    public bool PirateQuest = true;
 	    public static bool BrokenRod = false;
+		
+		public int currentQuest
+        {
+            get { return CurrentQuest; }
+            set { CurrentQuest = value; }
+        }
+
+	    public override void clientClone(ModPlayer clientClone)
+	    {
+	        QuestSystem clone = clientClone as QuestSystem;
+			clone.CurrentQuest = CurrentQuest;
+		}
+
+		public override void SendClientChanges(ModPlayer clientPlayer)
+		{
+			QuestSystem clone = clientPlayer as QuestSystem;
+			if (clone.CurrentQuest != CurrentQuest)
+			{
+				ModPacket packet = mod.GetPacket();
+				packet.Write((byte)3);
+				packet.Write(player.whoAmI);
+				packet.Write(CurrentQuest);
+				packet.Send();
+			}
+		}
+
+		public override void SyncPlayer(int toWho, int fromWho, bool newPlayer)
+	    {
+	        ModPacket packet = mod.GetPacket();
+	        packet.Write((byte)3);
+			packet.Write(player.whoAmI); 
+	        packet.Write(CurrentQuest);
+	        packet.Send(toWho, fromWho);
+	    }
 
         public override void Initialize()
 		{
@@ -134,26 +168,26 @@ namespace Antiaris.NPCs.Town
 				quest.Reward = "";
                 Quests.Add(quest);
 
-                if (Antiaris.TerrariaOverhaul != null)
-                {
-                    quest = new ItemQuest(Name16 + "\n\n" + Quest16, Antiaris.TerrariaOverhaul.ItemType("Charcoal"), 25, 999d);
-                    quest.IsAvailable = () => (Antiaris.TerrariaOverhaul != null);
-                    quest.Reward = "";
-                    Quests.Add(quest);
-                }
-
-                quest = new ItemQuest(Name17 + "\n\n" + Quest17, mod.ItemType("SpiderMass"), 12, 1d);
+                quest = new ItemQuest(Name16 + "\n\n" + Quest16, mod.ItemType("SpiderMass"), 12, 1d);
 				quest.Reward = "";
                 Quests.Add(quest);
 				
-				quest = new ItemQuest(Name18 + "\n\n" + Quest18, mod.ItemType("StolenPresent"), 20, 1d);
+				quest = new ItemQuest(Name17 + "\n\n" + Quest17, mod.ItemType("StolenPresent"), 20, 1d);
                 quest.IsAvailable = () => Main.xMas && NPC.downedPlantBoss;
                 quest.Reward = "GelidRing";
                 Quests.Add(quest);
 				
-				quest = new ItemQuest(Name19 + "\n\n" + Quest19, mod.ItemType("EmeraldShard"), 12, 1d, "Mods.Antiaris.ThanksShards");
+				quest = new ItemQuest(Name18 + "\n\n" + Quest18, mod.ItemType("EmeraldShard"), 12, 1d, "Mods.Antiaris.ThanksShards");
                 quest.Reward = "LivingEmerald";
                 Quests.Add(quest);	
+				
+				if (Antiaris.TerrariaOverhaul != null)
+                {
+                    quest = new ItemQuest(Name19 + "\n\n" + Quest19, Antiaris.TerrariaOverhaul.ItemType("Charcoal"), 25, 1d);
+                    quest.IsAvailable = () => (Antiaris.TerrariaOverhaul != null);
+                    quest.Reward = "";
+                    Quests.Add(quest);
+                }
             }
             catch (Exception exception)
             {
@@ -178,7 +212,6 @@ namespace Antiaris.NPCs.Town
 
 	    public void CompleteQuest()
         {
-            //CurrentQuest = -1;
             CompletedToday = true;
             CompletedTotal++;
             QuestKills = 0;
@@ -224,12 +257,29 @@ namespace Antiaris.NPCs.Town
 			return questChoice;
 		}
 
-	    public override void PostUpdate()
+		public void SendAdventurerQuest(int remoteClient)
+		{
+			if (Main.netMode != 2) return;
+			if (remoteClient == -1)
+				for (int remoteClient1 = 0; remoteClient1 < 255; ++remoteClient1)
+				{
+					if (Netplay.Clients[remoteClient1].State == 10)
+						NetMessage.SendData(74, remoteClient1, -1, NetworkText.FromLiteral(Main.player[remoteClient1].name), Main.player[Main.myPlayer].GetModPlayer<QuestSystem>(mod).CurrentQuest, 0.0f, 0.0f, 0.0f, 0, 0, 0);
+				}
+			else
+			{
+				if (Netplay.Clients[remoteClient].State != 10) return;
+				NetMessage.SendData(74, remoteClient, -1, NetworkText.FromLiteral(Main.player[remoteClient].name), Main.player[Main.myPlayer].GetModPlayer<QuestSystem>(mod).CurrentQuest, 0.0f, 0.0f, 0.0f, 0, 0, 0);
+			}
+		}
+
+		public override void PostUpdate()
 		{
             if (CompletedToday) CurrentQuest = -1;
-            try
+			SendAdventurerQuest(-1);
+			try
             {
-                if (Main.dayTime)
+                if (Main.dayTime && CompletedToday)
                 {
                     if (Main.time < 1 || (Main.fastForwardTime && Main.time < 61))
                     {

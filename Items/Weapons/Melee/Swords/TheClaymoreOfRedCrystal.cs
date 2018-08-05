@@ -29,7 +29,7 @@ namespace Antiaris.Items.Weapons.Melee.Swords
             item.UseSound = SoundID.Item1;
             item.autoReuse = true;
             item.shoot = mod.ProjectileType("TheRedShard");
-			item.shootSpeed = 4.4f;
+			item.shootSpeed = 5.6f;
 		}
 
 	    public override void SetStaticDefaults()

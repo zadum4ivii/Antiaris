@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using TerrariaOverhaul;
+using Antiaris.NPCs.Town;
 
 namespace Antiaris.NPCs.Enemies
 {
@@ -55,10 +56,23 @@ namespace Antiaris.NPCs.Enemies
         {
             if (Main.netMode != 1)
             {
+                int playerIndex = npc.lastInteraction;
+				if (!Main.player[playerIndex].active || Main.player[playerIndex].dead)
+				{
+					playerIndex = npc.FindClosestPlayer();
+				}
+				Player player = Main.player[playerIndex];
                 int centerX = (int)(npc.position.X + (float)(npc.width / 2)) / 16;
                 int centerY = (int)(npc.position.Y + (float)(npc.height / 2)) / 16;
                 int halfLength = npc.width / 2 / 16 + 1;
-                Item.NewItem((int)npc.position.X, (int)npc.position.Y, npc.width, npc.height, mod.ItemType("SpiderMass"), Main.rand.Next(1, 3), false, 0, false, false);
+                var questSystem = Main.player[playerIndex].GetModPlayer<QuestSystem>(mod);
+				int number = 0;
+				if (questSystem.currentQuest == QuestItemID.SpiderMass)
+				{
+					number = Item.NewItem((int)npc.position.X, (int)npc.position.Y, npc.width, npc.height, mod.ItemType("SpiderMass"), Main.rand.Next(2, 4), false, 0, false, false);
+					if (Main.netMode == 1 && number >= 0)
+						NetMessage.SendData(21, -1, -1, null, number, 1f, 0.0f, 0.0f, 0, 0, 0);
+				}
             }
         }
 

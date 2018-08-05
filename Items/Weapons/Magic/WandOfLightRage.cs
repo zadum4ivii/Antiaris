@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using TerrariaOverhaul;
 
 namespace Antiaris.Items.Weapons.Magic
 {
@@ -37,11 +38,16 @@ namespace Antiaris.Items.Weapons.Magic
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Wand of Light Rage");
-            Tooltip.SetDefault("Casts furios lightning at enemies\n'Forged with Aer'");
+            Tooltip.SetDefault("Casts furious lightning at enemies\n'Forged with Aer'");
 			DisplayName.AddTranslation(GameCulture.Chinese, "雷怒之杖");
 			Tooltip.AddTranslation(GameCulture.Chinese, "对敌人降下天谴\n“空气之造物”");
             DisplayName.AddTranslation(GameCulture.Russian, "Посох ярости света");
             Tooltip.AddTranslation(GameCulture.Russian, "Выпускает яростную молнию в противников\n'Сковано из Аера'");
+        }
+
+        public void OverhaulInit()
+        {
+            this.SetTag("magicWeapon", false);
         }
 
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)

@@ -102,12 +102,12 @@ namespace Antiaris.NPCs.Town
                 Main.npcChatText = Language.GetTextValue("Mods.Antiaris.PirateCompleted");
 				Main.npcChatCornerItem = 0;
             }
-            else if (pirateQuestSystem.ChooseQuest == -1)
+            else if (pirateQuestSystem.CurrentPirateQuest == -1)
             {
                 var NewQuest = PirateQuestSystem.ChooseNewQuest();
                 Main.npcChatText = PirateQuestSystem.Quests[NewQuest].ToString();
                 Main.npcChatCornerItem = PirateQuestSystem.Quests[NewQuest].ItemType;
-                pirateQuestSystem.ChooseQuest = NewQuest;
+                pirateQuestSystem.CurrentPirateQuest = NewQuest;
                 return;
             }
             else
@@ -137,8 +137,7 @@ namespace Antiaris.NPCs.Town
         public class PirateQuestSystem : ModPlayer
         {
             public static List<Quest> Quests = new List<Quest>();
-            public bool chooseQuest = false;
-            public int ChooseQuest = -1;
+            public int CurrentPirateQuest = -1;
 
             public override void Initialize()
             {
@@ -148,15 +147,48 @@ namespace Antiaris.NPCs.Town
 
             public Quest GetCurrentQuest()
             {
-                return Quests[ChooseQuest];
+                return Quests[CurrentPirateQuest];
             }
+			
+			public int currentPirateQuest
+			{
+				get { return CurrentPirateQuest; }
+				set { CurrentPirateQuest = value; }
+			}
+
+			public override void clientClone(ModPlayer clientClone)
+			{
+				PirateQuestSystem clone = clientClone as PirateQuestSystem;
+				clone.CurrentPirateQuest = CurrentPirateQuest;
+			}
+
+			public override void SendClientChanges(ModPlayer clientPlayer)
+			{
+				PirateQuestSystem clone = clientPlayer as PirateQuestSystem;
+				if (clone.CurrentPirateQuest != CurrentPirateQuest)
+				{
+					ModPacket packet = mod.GetPacket();
+					packet.Write((byte)4);
+					packet.Write(player.whoAmI);
+					packet.Write(CurrentPirateQuest);
+					packet.Send();
+				}
+			}
+
+			public override void SyncPlayer(int toWho, int fromWho, bool newPlayer)
+			{
+				ModPacket packet = mod.GetPacket();
+				packet.Write((byte)4);
+				packet.Write(player.whoAmI); 
+				packet.Write(CurrentPirateQuest);
+				packet.Send(toWho, fromWho);
+			}
 
             public bool CheckQuest()
             {
-                if (ChooseQuest == -1)
+                if (CurrentPirateQuest == -1)
                     return false;
-				chooseQuest = true;
-                var quest = Quests[ChooseQuest];
+                var quest = Quests[CurrentPirateQuest];
                 if (player.CountItem(quest.ItemType, quest.ItemAmount) >= quest.ItemAmount)
                 {
                     int LeftToRemove = quest.ItemAmount;
@@ -179,14 +211,14 @@ namespace Antiaris.NPCs.Town
 
             public void CompleteQuest()
             {
-                var quest = Quests[ChooseQuest];
+                var quest = Quests[CurrentPirateQuest];
                 Pirate.Completed = true;
-                ChooseQuest = -1;
+                CurrentPirateQuest = -1;
             }
 
             public void SpawnReward(NPC npc)
             {
-                switch (ChooseQuest)
+                switch (CurrentPirateQuest)
                 {
                     case 0:
                         int number = 0;
@@ -204,15 +236,13 @@ namespace Antiaris.NPCs.Town
 
             public override void Load(TagCompound tag)
             {
-                ChooseQuest = tag.GetInt("Current");
-				chooseQuest = tag.GetBool("Choose?");
+                CurrentPirateQuest = tag.GetInt("Current");
             }
 
             public override TagCompound Save()
             {
                 var tag = new TagCompound();
-                tag.Set("Current", ChooseQuest);
-				tag.Set("Choose?", chooseQuest);
+                tag.Set("Current", CurrentPirateQuest);
                 return tag;
             }
         }

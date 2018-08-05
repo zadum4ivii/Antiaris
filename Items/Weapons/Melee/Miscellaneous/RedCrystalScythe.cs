@@ -29,7 +29,7 @@ namespace Antiaris.Items.Weapons.Melee.Miscellaneous
             item.autoReuse = true;
             item.useTurn = true;
             item.shoot = mod.ProjectileType("CrystalScythe");
-            item.shootSpeed = 5f;
+            item.shootSpeed = 7f;
         }
 
         public void OverhaulInit()

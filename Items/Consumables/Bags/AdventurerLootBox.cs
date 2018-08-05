@@ -83,14 +83,6 @@ namespace Antiaris.Items.Consumables.Bags
                 {
                     player.QuickSpawnItem(706, Main.rand.Next(16, 24));
                 }
-                if (Main.rand.Next(10) == 0)
-                {
-                    player.QuickSpawnItem(175, Main.rand.Next(8, 12));
-                }
-                if (Main.rand.Next(10) == 0)
-                {
-                    player.QuickSpawnItem(117, Main.rand.Next(8, 12));
-                }
                 if (Main.hardMode)
                 {
                     var rand2 = Main.rand.Next(0, 5);

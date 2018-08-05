@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using TerrariaOverhaul;
 
 namespace Antiaris.Items.Weapons.Magic
 {
@@ -37,6 +38,11 @@ namespace Antiaris.Items.Weapons.Magic
             DisplayName.SetDefault("Rainbow Flicker");
             DisplayName.AddTranslation(GameCulture.Chinese, "闪耀虹彩");
             DisplayName.AddTranslation(GameCulture.Russian, "Радужная вспышка");
+        }
+
+        public void OverhaulInit()
+        {
+            this.SetTag("magicWeapon", false);
         }
 
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)

@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using TerrariaOverhaul;
 
 namespace Antiaris.Items.Weapons.Magic
 {
@@ -38,6 +39,11 @@ namespace Antiaris.Items.Weapons.Magic
             DisplayName.SetDefault("Treacheous Bolt Staff");
 			DisplayName.AddTranslation(GameCulture.Chinese, "千瞬闪电杖");
             DisplayName.AddTranslation(GameCulture.Russian, "Посох коварной молнии");
+        }
+
+        public void OverhaulInit()
+        {
+            this.SetTag("magicWeapon", false);
         }
 
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)

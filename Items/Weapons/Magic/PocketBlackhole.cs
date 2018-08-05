@@ -2,6 +2,7 @@
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using TerrariaOverhaul;
 
 namespace Antiaris.Items.Weapons.Magic
 {
@@ -18,7 +19,7 @@ namespace Antiaris.Items.Weapons.Magic
             item.useAnimation = 10;
             item.reuseDelay = 5;
             item.useStyle = 5;
-            item.UseSound = mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Items/PocketBlackhole");
+            item.UseSound = mod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/Items/PocketBlackhole");
             item.noMelee = true;
             item.noUseGraphic = true;
             item.channel = true;
@@ -37,6 +38,11 @@ namespace Antiaris.Items.Weapons.Magic
 			Tooltip.AddTranslation(GameCulture.Chinese, "“麻雀虽小，五脏俱全”");
 			DisplayName.AddTranslation(GameCulture.Russian, "Карманная чёрная дыра");
 			Tooltip.AddTranslation(GameCulture.Russian, "'Такая маленькая, но такая мощная!'");
+        }
+
+        public void OverhaulInit()
+        {
+            this.SetTag("magicWeapon", false);
         }
 
         public override void AddRecipes()

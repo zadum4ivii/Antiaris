@@ -18,9 +18,9 @@
         public const short DemonWings = 13;
         public const short AdventurerChest = 14;
         public const short Coconut = 15;
-        public const short Charcoal = 16;
-        public const short SpiderMass = 17;
-        public const short StolenPresent = 18;
-        public const short EmeraldShard = 19;
+        public const short SpiderMass = 16;
+        public const short StolenPresent = 17;
+        public const short EmeraldShard = 18;
+		public const short Charcoal = 19;
     }
 }

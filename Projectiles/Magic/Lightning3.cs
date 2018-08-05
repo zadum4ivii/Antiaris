@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using System;
 
 namespace Antiaris.Projectiles.Magic
 {
@@ -44,19 +45,27 @@ namespace Antiaris.Projectiles.Magic
 
 	    public override void AI()
 		{
-            if (this.bolt == null)
-            {
-                this.bolt = new LightningBolt(projectile.position, 0, 3f);
-            }
-			if (projectile.wet)
+			try
 			{
-				projectile.hostile = true;
-				projectile.friendly = false;
+				if (this.bolt == null)
+				{
+					this.bolt = new LightningBolt(projectile.position, 0, 3f);
+				}
+				if (projectile.wet)
+				{
+					projectile.hostile = true;
+					projectile.friendly = false;
+				}
+				this.UpdateBolt();
+				if (this.bolt.Ticks <= 0 && Main.rand.NextBool(1, 2))
+				{
+					this.bolt = new LightningBolt(projectile.position, projectile.position + Vector2.Normalize(projectile.velocity) * this.length, Main.rand.Next(3, 5), 4f);
+				}
 			}
-			this.UpdateBolt();		
-			if (this.bolt.Ticks <= 0 && Main.rand.NextBool(1, 2))
+			catch (Exception exception)
 			{
-				this.bolt = new LightningBolt(projectile.position, projectile.position + Vector2.Normalize(projectile.velocity) * this.length, Main.rand.Next(3, 5), 4f);
+				Main.NewText("Oh no, an error happened! Report this to Zerokk and send him the file Terraria/ModLoader/Logs/Logs.txt");
+				ErrorLogger.Log(exception);
 			}
 		}
 

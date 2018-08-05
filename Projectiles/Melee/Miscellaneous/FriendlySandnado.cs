@@ -77,7 +77,9 @@ namespace Antiaris.Projectiles.Melee.Miscellaneous
                                 direction = 1;
                             }
                             npc.StrikeNPC((int)damage, knockBack, direction, false, false, false);
-                        }
+							if (Main.netMode != 0)
+								NetMessage.SendData(28, -1, -1, NetworkText.FromLiteral(""), npc.whoAmI, (float)1, knockBack, (float)direction, (int)damage);
+						}
                     }
                 }
             }

@@ -10,7 +10,7 @@ namespace Antiaris.NPCs.Enemies
     {
         public override void SetDefaults()
         {
-            npc.lifeMax = 54;
+            npc.lifeMax = 40;
             npc.damage = 13;
             npc.defense = 5;
             npc.aiStyle = -1;

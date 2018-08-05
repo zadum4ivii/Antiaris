@@ -127,7 +127,7 @@ namespace Antiaris
 
         public override void RandomUpdate(int i, int j, int type)
 		{
-            if (type == 117 || type == 116 || type == 164)
+            if (type == 117 || type == 116 || type == 164 || type == 402 || type == 403) 
             {
 				if(randomTiles.Contains(Framing.GetTileSafely(i, j - 1).type) && randomTiles.Contains(Framing.GetTileSafely(i, j - 2).type) && Main.hardMode)
 				{

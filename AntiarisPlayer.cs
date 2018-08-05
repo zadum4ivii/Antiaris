@@ -1419,7 +1419,7 @@ namespace Antiaris
             {
                 player.AddBuff(mod.BuffType("Tranquility"), 300);
             }
-            if (RuneofBleeding && Main.netMode != 2)
+            if (RuneofBleeding)
             {
                 for (var k = 0; k < 200; k++)
                 {
@@ -1435,7 +1435,9 @@ namespace Antiaris
                             direction = 1;
                         }
                         Main.npc[k].StrikeNPC((int)25, 1f, direction, Main.rand.Next(2) == 0 ? true : false, false, false);
-                    }
+						if (Main.netMode != 0)
+							NetMessage.SendData(28, -1, -1, NetworkText.FromLiteral(""), Main.npc[k].whoAmI, (float)1, 1f, (float)direction, 25);
+					}
                 }
             }
         }
@@ -1586,17 +1588,11 @@ namespace Antiaris
                 Projectile.NewProjectile(DistX, DistY, direction.X + A, direction.Y + B, mod.ProjectileType("EnchantedDagger"), 15, 1, player.whoAmI, 0f, 0f);
             }
         }
-
-        public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
-        {
-            if (antlionSet)
-            {
-                playSound = false;
-                Main.PlaySound(SoundID.NPCHit31, player.position);
-            }
-            string HarpyEggBroken = Language.GetTextValue("Mods.Antiaris.HarpyEggBroken", Main.LocalPlayer.name);
-            string eggDeathReason = damageSource.ToString();
-            string HarpyEggDeath = Language.GetTextValue("Mods.Antiaris.HarpyEggDeath", eggDeathReason);
+		
+		public override void OnHitByNPC(NPC npc, int damage, bool crit)
+		{
+			string HarpyEggBroken = Language.GetTextValue("Mods.Antiaris.HarpyEggBroken", Main.LocalPlayer.name);
+            string HarpyEggDeath = Language.GetTextValue("Mods.Antiaris.HarpyEggDeath");
             int HarpyEgg = player.FindItem(mod.ItemType("HarpyEgg"));
             if (HarpyEgg != -1)
             {
@@ -1611,6 +1607,15 @@ namespace Antiaris
                     Gore.NewGore(player.position, Main.rand.NextVector2Unit() * 2f, mod.GetGoreSlot("Gores/HarpyEggGore4"));
                     Main.NewText(HarpyEggDeath, 187, 20, 20);
                 }
+            }
+		}
+
+        public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
+        {
+            if (antlionSet)
+            {
+                playSound = false;
+                Main.PlaySound(SoundID.NPCHit31, player.position);
             }
             return base.PreHurt(pvp, quiet, ref damage, ref hitDirection, ref crit, ref customDamage, ref playSound, ref genGore, ref damageSource);
         }

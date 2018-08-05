@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using TerrariaOverhaul;
 
 namespace Antiaris.Items.Weapons.Magic
 {
@@ -42,6 +43,11 @@ namespace Antiaris.Items.Weapons.Magic
 			Tooltip.AddTranslation(GameCulture.Chinese, "发射具有破坏性的自然能量射线\n“大地之造物”");
             DisplayName.AddTranslation(GameCulture.Russian, "Посох природы");
             Tooltip.AddTranslation(GameCulture.Russian, "Выпускает наносящий урон луч земной энергии\n'Сковано из Терры'");
+        }
+
+        public void OverhaulInit()
+        {
+            this.SetTag("magicWeapon", false);
         }
 
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)

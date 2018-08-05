@@ -63,7 +63,9 @@ namespace Antiaris.Buffs.Mounts
                         if (player.whoAmI == Main.myPlayer)
                         {
                             npc.StrikeNPC((int)damage, knockBack, direction, false, false, false);
-                        }
+							if (Main.netMode != 0)
+								NetMessage.SendData(28, -1, -1, NetworkText.FromLiteral(""), npc.whoAmI, (float)1, knockBack, (float)direction, (int)damage);
+						}
                         npc.immune[player.whoAmI] = 10;
                         player.velocity.Y = -20f;
                         player.immune = true;

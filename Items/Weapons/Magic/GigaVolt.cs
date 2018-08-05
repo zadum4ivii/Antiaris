@@ -2,6 +2,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using TerrariaOverhaul;
 
 namespace Antiaris.Items.Weapons.Magic
 {
@@ -34,6 +35,11 @@ namespace Antiaris.Items.Weapons.Magic
             Tooltip.AddTranslation(GameCulture.Chinese, "<right> 蓄积电能\n“这只是个开过光的游戏硬币，你甚至可以用它玩游戏”");
             DisplayName.AddTranslation(GameCulture.Russian, "Гигавольт");
             Tooltip.AddTranslation(GameCulture.Russian, "<right>, чтобы зарядить батарейку\nИзменяет атаку в соответствии c зарядом батарейки:\n[c/1F262E:0 - выстреливает тремя электрическими зарядами]\n[c/CD1417:1 - выстреливает одним большим проникающим электрическим зарядом]\n[c/E89417:2 - выстреливает одним проникающим быстрым большим электрическим зарядом]\n[c/00FF00:3 - выстреливает треями проникающими быстрыми большими электрическими зарядами]\n[c/15A2E9:4 - выстреливает большой молнией]");
+        }
+
+        public void OverhaulInit()
+        {
+            this.SetTag("magicWeapon", false);
         }
 
         public override bool AltFunctionUse(Player player)

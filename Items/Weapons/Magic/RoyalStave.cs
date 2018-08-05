@@ -37,7 +37,7 @@ namespace Antiaris.Items.Weapons.Magic
 			ItemID.Sets.LockOnIgnoresCollision[item.type] = true;
 		}
 
-	    public override bool CanUseItem(Player player)
+        public override bool CanUseItem(Player player)
 		{
 			if(player.altFunctionUse == 2)
 			{

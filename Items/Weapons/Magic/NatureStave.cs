@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using TerrariaOverhaul;
 
 namespace Antiaris.Items.Weapons.Magic
 {
@@ -45,6 +46,11 @@ namespace Antiaris.Items.Weapons.Magic
         public override Vector2? HoldoutOffset()
         {
             return new Vector2(-4, -6);
+        }
+
+        public void OverhaulInit()
+        {
+            this.SetTag("magicWeapon", false);
         }
 
         public override void AddRecipes()

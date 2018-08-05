@@ -225,24 +225,23 @@ namespace Antiaris.UIs
             string TurnIn = Language.GetTextValue("Mods.Antiaris.TurnIn");
 
             string[] QuestItems = { "OldCompass", "GlacialCrystal", "Leather", "MonsterSkull", "HarpyEgg", "GoldenApple", "Necronomicon", "Slimes",
-            "UndeadMiner", "BirdTraveller", "SilkScarf", "AdventurerFishingRod", "Bonebardier", "DemonWingPiece", "AdventurerChest", "Coconut", "Charcoal",
-            "SpiderMass", "StolenPresent", "EmeraldShard"};
+            "UndeadMiner", "BirdTraveller", "SilkScarf", "AdventurerFishingRod", "Bonebardier", "DemonWingPiece", "AdventurerChest", "Coconut", "SpiderMass",
+            "StolenPresent", "EmeraldShard", "Charcoal"};
 
-            int[] QuestAmount = { 1, 1, 12, 1, 1, 1, 1, 25, 1, 5, 1, 1, 1, 12, 1, 16, 25, 12, 20, 12 };
+            int[] QuestAmount = { 1, 1, 12, 1, 1, 1, 1, 25, 1, 5, 1, 1, 1, 12, 1, 16, 12, 20, 12, 25 };
 
             string[] QuestNamesEn = { "Old Compass", "Glacial Crystal", "Leather", "Monster Skull", "Harpy Egg", "Golden Apple", "Necronomicon", "Slime",
-            "Undead Miner", "Bird Traveller", "Silk Scarf", "Adventurer's Fishing Rod", "Bonebardier", "Demon Wing Piece", "Adventurer's Chest", "Coconut", "Charcoal",
-            "Spider Mass", "Stolen Present", "Emerald Shard"};
+            "Undead Miner", "Bird Traveller", "Silk Scarf", "Adventurer's Fishing Rod", "Bonebardier", "Demon Wing Piece", "Adventurer's Chest", "Coconut", "Spider Mass",
+            "Stolen Present", "Emerald Shard", "Charcoal"};
 
             string[] QuestNamesRu = { "Старый компас", "Ледяной кристалл", "Кожа", "Череп монстра", "Яйцо гарпии", "Золотое яблоко", "Некрономикон", "Слизень",
-            "Мёртвый шахтёр", "Птица-путешественник", "Шёлковый шарф", "Удочка Путешественника", "Костордир", "Часть крыла демона", "Сундук Путешественника", "Кокос", "Древесный уголь",
-            "Паучья масса", "Украденные подарки", "Изумрудный осколок"};
+            "Мёртвый шахтёр", "Птица-путешественник", "Шёлковый шарф", "Удочка Путешественника", "Костордир", "Часть крыла демона", "Сундук Путешественника", "Кокос", "Паучья масса",
+            "Украденные подарки", "Изумруднике осколки", "Древесный уголь"};
 
             string[] QuestNamesCn = { "旧罗盘", "冰晶体", "皮革", "古生物骸骨", "鹰身女妖的蛋", "金苹果", "死灵法书", "史莱姆",
-            "不死矿工", "荼毒女王鸟", "丝绸围巾", "冒险家的鱼竿", "骸骨炮兵", "恶魔翅膀的碎片", "冒险家的箱子", "椰子", "木炭",
-            "蜘蛛分泌物", "偷来的礼物", "翡翠碎片"};
-
-
+            "不死矿工", "荼毒女王鸟", "丝绸围巾", "冒险家的鱼竿", "骸骨炮兵", "恶魔翅膀的碎片", "冒险家的箱子", "椰子", "蜘蛛分泌物",
+            "偷来的礼物", "翡翠碎片", "木炭"};
+			
             string QuestItemName = QuestNamesRu[questSystem.CurrentQuest];
             if (Language.ActiveCulture == GameCulture.Russian)
             {

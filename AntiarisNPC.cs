@@ -121,7 +121,7 @@ namespace Antiaris
             var texture = mod.GetTexture("Miscellaneous/QuestIcon");
             if (texture == null) return;
             var questSystem = Main.player[Main.myPlayer].GetModPlayer<QuestSystem>();
-            if (questSystem.CurrentQuest >= 0 && questSystem.CurrentQuest != -1 && questSystem.GetCurrentQuest() is KillQuest)
+            if (questSystem.currentQuest >= 0 && questSystem.currentQuest != -1 && questSystem.GetCurrentQuest() is KillQuest)
                 foreach (var i in (questSystem.GetCurrentQuest() as KillQuest).TargetType)
                     if (npc.type == i)
                     {
@@ -147,8 +147,15 @@ namespace Antiaris
 
         public override void NPCLoot(NPC npc)
         {
-            var questSystem = Main.player[Main.myPlayer].GetModPlayer<QuestSystem>(mod);
-            var aPlayer = Main.player[Main.myPlayer].GetModPlayer<AntiarisPlayer>(mod);
+			int playerIndex = npc.lastInteraction;
+			if (!Main.player[playerIndex].active || Main.player[playerIndex].dead)
+			{
+				playerIndex = npc.FindClosestPlayer();
+			}
+			Player player = Main.player[playerIndex];
+            var questSystem = Main.player[playerIndex].GetModPlayer<QuestSystem>(mod);
+            var aPlayer = Main.player[playerIndex].GetModPlayer<AntiarisPlayer>(mod);
+			var pirateQuestSystem = Main.player[playerIndex].GetModPlayer<Pirate.PirateQuestSystem>(mod);
             int number = 0;
             if (!npc.SpawnedFromStatue)
             {
@@ -174,7 +181,7 @@ namespace Antiaris
                 if (npc.type == 283 || npc.type == 284)
                     Item.NewItem((int) npc.position.X, (int) npc.position.Y, npc.width, npc.height, mod.ItemType("NecroCloth"), Main.rand.Next(10, 14), false, 0, false, false);
 
-                if (questSystem.CurrentQuest == QuestItemID.GlacialCrystal &&
+                if (questSystem.currentQuest == QuestItemID.GlacialCrystal &&
                     (npc.type == 206 || npc.type == 167 || npc.type == 147 || npc.type == 169 || npc.type == 184 ||
                      npc.type == 150) && Main.rand.Next(4) == 0)
                 {
@@ -183,7 +190,7 @@ namespace Antiaris
                         NetMessage.SendData(21, -1, -1, null, number, 1f, 0.0f, 0.0f, 0, 0, 0);
                 }
 
-                if (questSystem.CurrentQuest == QuestItemID.Necronomicon &&
+                if (questSystem.currentQuest == QuestItemID.Necronomicon &&
                     (npc.type == 31 || npc.type == 294 || npc.type == 295 || npc.type == 296 || npc.type == 32 ||
                      npc.type == 34) && Main.rand.Next(6) == 0)
                 {
@@ -192,27 +199,29 @@ namespace Antiaris
                         NetMessage.SendData(21, -1, -1, null, number, 1f, 0.0f, 0.0f, 0, 0, 0);
                 }
 
-                if (questSystem.CurrentQuest == QuestItemID.HarpyEgg && npc.type == 48 && Main.rand.Next(6) == 0)
+                if (questSystem.currentQuest == QuestItemID.HarpyEgg && npc.type == 48 && Main.rand.Next(6) == 0)
                 {
                     number = Item.NewItem((int) npc.position.X, (int) npc.position.Y, npc.width, npc.height, mod.ItemType("HarpyEgg"), 1, false, 0, false, false);
                     if (Main.netMode == 1 && number >= 0)
                         NetMessage.SendData(21, -1, -1, null, number, 1f, 0.0f, 0.0f, 0, 0, 0);
                 }
 
-                if (questSystem.CurrentQuest == QuestItemID.AdventurersFishingRod && (npc.type == 3 ||
+                if (questSystem.currentQuest == QuestItemID.AdventurersFishingRod && (npc.type == 3 ||
                                                                                       npc.type == 132 ||
                                                                                       npc.type == 161 ||
                                                                                       npc.type == 186 ||
-                                                                                      npc.type == 187 || npc.type == 188
-                                                                                      || npc.type == 189 ||
+                                                                                      npc.type == 187 || 
+																					  npc.type == 188 ||
+                                                                                      npc.type == 189 ||
                                                                                       npc.type == 200 ||
                                                                                       npc.type == 223 ||
                                                                                       npc.type == 254 ||
                                                                                       npc.type == 255 ||
                                                                                       npc.type == 319 ||
                                                                                       npc.type == 320 ||
-                                                                                      npc.type == 321 || npc.type == 331
-                                                                                      || npc.type == 332 ||
+                                                                                      npc.type == 321 || 
+																					  npc.type == 331 ||
+                                                                                      npc.type == 332 ||
                                                                                       npc.type == 430 ||
                                                                                       npc.type == 431 ||
                                                                                       npc.type == 432 ||
@@ -224,24 +233,26 @@ namespace Antiaris
                                                                                   && Main.rand.Next(6) == 0)
                 {
                     number = Item.NewItem((int) npc.position.X, (int) npc.position.Y, npc.width, npc.height, mod.ItemType("AdventurersFishingRodPart1"), 1, false, 0, false, false);
-                    if (Main.netMode == 1 && number >= 0)
+                    if (Main.netMode != 1 && number >= 0)
                         NetMessage.SendData(21, -1, -1, null, number, 1f, 0.0f, 0.0f, 0, 0, 0);
                 }
 
-                if (questSystem.CurrentQuest == QuestItemID.AdventurersFishingRod && (npc.type == 3 ||
+                if (questSystem.currentQuest == QuestItemID.AdventurersFishingRod && (npc.type == 3 ||
                                                                                       npc.type == 132 ||
                                                                                       npc.type == 161 ||
                                                                                       npc.type == 186 ||
-                                                                                      npc.type == 187 || npc.type == 188
-                                                                                      || npc.type == 189 ||
+                                                                                      npc.type == 187 || 
+																					  npc.type == 188 ||
+                                                                                      npc.type == 189 ||
                                                                                       npc.type == 200 ||
                                                                                       npc.type == 223 ||
                                                                                       npc.type == 254 ||
                                                                                       npc.type == 255 ||
                                                                                       npc.type == 319 ||
                                                                                       npc.type == 320 ||
-                                                                                      npc.type == 321 || npc.type == 331
-                                                                                      || npc.type == 332 ||
+                                                                                      npc.type == 321 || 
+																					  npc.type == 331 ||
+                                                                                      npc.type == 332 ||
                                                                                       npc.type == 430 ||
                                                                                       npc.type == 431 ||
                                                                                       npc.type == 432 ||
@@ -257,20 +268,22 @@ namespace Antiaris
                         NetMessage.SendData(21, -1, -1, null, number, 1f, 0.0f, 0.0f, 0, 0, 0);
                 }
 
-                if (questSystem.CurrentQuest == QuestItemID.AdventurersFishingRod && (npc.type == 3 ||
+                if (questSystem.currentQuest == QuestItemID.AdventurersFishingRod && (npc.type == 3 ||
                                                                                       npc.type == 132 ||
                                                                                       npc.type == 161 ||
                                                                                       npc.type == 186 ||
-                                                                                      npc.type == 187 || npc.type == 188
-                                                                                      || npc.type == 189 ||
+                                                                                      npc.type == 187 || 
+																					  npc.type == 188 ||
+                                                                                      npc.type == 189 ||
                                                                                       npc.type == 200 ||
                                                                                       npc.type == 223 ||
                                                                                       npc.type == 254 ||
                                                                                       npc.type == 255 ||
                                                                                       npc.type == 319 ||
                                                                                       npc.type == 320 ||
-                                                                                      npc.type == 321 || npc.type == 331
-                                                                                      || npc.type == 332 ||
+                                                                                      npc.type == 321 || 
+																					  npc.type == 331 ||
+                                                                                      npc.type == 332 ||
                                                                                       npc.type == 430 ||
                                                                                       npc.type == 431 ||
                                                                                       npc.type == 432 ||
@@ -286,14 +299,14 @@ namespace Antiaris
                         NetMessage.SendData(21, -1, -1, null, number, 1f, 0.0f, 0.0f, 0, 0, 0);
                 }
 
-                if (questSystem.CurrentQuest == QuestItemID.DemonWings && npc.type == 62 && Main.rand.Next(1) == 0)
+                if (questSystem.currentQuest == QuestItemID.DemonWings && npc.type == 62 && Main.rand.Next(1) == 0)
                 {
-                    number = Item.NewItem((int) npc.position.X, (int) npc.position.Y, npc.width, npc.height, mod.ItemType("DemonWingPiece"), Main.rand.Next(1, 3), false, 0, false, false);
+                    Item.NewItem((int) npc.position.X, (int) npc.position.Y, npc.width, npc.height, mod.ItemType("DemonWingPiece"), Main.rand.Next(1, 3), false, 0, false, false);
                     if (Main.netMode == 1 && number >= 0)
-                        NetMessage.SendData(21, -1, -1, null, number, 1f, 0.0f, 0.0f, 0, 0, 0);
+                       NetMessage.SendData(21, -1, -1, null, number, 1f, 0.0f, 0.0f, 0, 0, 0);
                 }
 
-                if (questSystem.CurrentQuest == QuestItemID.AdventurerChest && npc.type == 65 && Main.rand.Next(6) == 0)
+                if (questSystem.currentQuest == QuestItemID.AdventurerChest && npc.type == 65 && Main.rand.Next(6) == 0)
                 {
                     number = Item.NewItem((int) npc.position.X, (int) npc.position.Y, npc.width, npc.height, mod.ItemType("AdventurerChest"), 1, false, 0, false, false);
                     if (Main.netMode == 1 && number >= 0)
@@ -312,36 +325,35 @@ namespace Antiaris
                     Item.NewItem((int) npc.position.X, (int) npc.position.Y, npc.width, npc.height, mod.ItemType("Shadowflame"), Main.rand.Next(5, 10), false, 0, false, false);
                 if (npc.type == 489)
                     Item.NewItem((int) npc.position.X, (int) npc.position.Y, npc.width, npc.height, mod.ItemType("BloodDroplet"), Main.rand.Next(4, 6), false, 0, false, false);
-            }
-
-            var player = Main.player[Main.myPlayer];
-            var pirateQuestSystem = player.GetModPlayer<Pirate.PirateQuestSystem>(mod);
-            if (pirateQuestSystem.chooseQuest && npc.type == 4 && Main.rand.Next(2) == 0)
-            {
-                number = Item.NewItem((int)npc.position.X, (int)npc.position.Y, npc.width, npc.height, mod.ItemType("AmuletPiece2"), 1, false, 0, false, false);
-                if (Main.netMode == 1 && number >= 0)
-                    NetMessage.SendData(21, -1, -1, null, number, 1f, 0.0f, 0.0f, 0, 0, 0);
-            }
-            if (pirateQuestSystem.chooseQuest)
-                if (npc.type == 13 || npc.type == 14 || npc.type == 15)
-                    if (npc.boss)
-                    {
-                        number = Item.NewItem((int)npc.position.X, (int)npc.position.Y, npc.width, npc.height, mod.ItemType("AmuletPiece1"), 1, false, 0, false, false);
-                        if (Main.netMode == 1 && number >= 0)
-                            NetMessage.SendData(21, -1, -1, null, number, 1f, 0.0f, 0.0f, 0, 0, 0);
-                    }
-            if (pirateQuestSystem.chooseQuest && npc.type == 266 && Main.rand.Next(2) == 0)
-            {
-                number = Item.NewItem((int)npc.position.X, (int)npc.position.Y, npc.width, npc.height, mod.ItemType("AmuletPiece1"), 1, false, 0, false, false);
-                if (Main.netMode == 1 && number >= 0)
-                    NetMessage.SendData(21, -1, -1, null, number, 1f, 0.0f, 0.0f, 0, 0, 0);
-            }
-            if (pirateQuestSystem.chooseQuest && npc.type == 50 && Main.rand.Next(2) == 0)
-            {
-                number = Item.NewItem((int)npc.position.X, (int)npc.position.Y, npc.width, npc.height, mod.ItemType("AmuletPiece3"), 1, false, 0, false, false);
-                if (Main.netMode == 1 && number >= 0)
-                    NetMessage.SendData(21, -1, -1, null, number, 1f, 0.0f, 0.0f, 0, 0, 0);
-            }
+			}  
+			if (pirateQuestSystem.currentPirateQuest == 0)
+			{
+				if (npc.type == 4 && Main.rand.Next(2) == 0)
+				{
+					number = Item.NewItem((int)npc.position.X, (int)npc.position.Y, npc.width, npc.height, mod.ItemType("AmuletPiece2"), 1, false, 0, false, false);
+					if (Main.netMode == 1 && number >= 0)
+						NetMessage.SendData(21, -1, -1, null, number, 1f, 0.0f, 0.0f, 0, 0, 0);
+				}
+				if (npc.type == 13 || npc.type == 14 || npc.type == 15)
+					if (npc.boss)
+					{
+						number = Item.NewItem((int)npc.position.X, (int)npc.position.Y, npc.width, npc.height, mod.ItemType("AmuletPiece1"), 1, false, 0, false, false);
+						if (Main.netMode == 1 && number >= 0)
+							NetMessage.SendData(21, -1, -1, null, number, 1f, 0.0f, 0.0f, 0, 0, 0);
+					}
+				if (npc.type == 266 && Main.rand.Next(2) == 0)
+				{
+					number = Item.NewItem((int)npc.position.X, (int)npc.position.Y, npc.width, npc.height, mod.ItemType("AmuletPiece1"), 1, false, 0, false, false);
+					if (Main.netMode == 1 && number >= 0)
+						NetMessage.SendData(21, -1, -1, null, number, 1f, 0.0f, 0.0f, 0, 0, 0);
+				}
+				if (npc.type == 50 && Main.rand.Next(2) == 0)
+				{
+					number = Item.NewItem((int)npc.position.X, (int)npc.position.Y, npc.width, npc.height, mod.ItemType("AmuletPiece3"), 1, false, 0, false, false);
+					if (Main.netMode == 1 && number >= 0)
+						NetMessage.SendData(21, -1, -1, null, number, 1f, 0.0f, 0.0f, 0, 0, 0);
+				}
+			}
         }
 
         public override bool CheckDead(NPC npc)

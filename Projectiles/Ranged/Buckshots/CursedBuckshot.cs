@@ -100,6 +100,8 @@ namespace Antiaris.Projectiles.Ranged.Buckshots
 					if(timer == 30)
 					{
 						npc.StrikeNPC((int)(projectile.damage / 5), 1f, 1, Main.rand.Next(2) == 0 ? true : false, false, false);
+						if (Main.netMode != 0)
+							NetMessage.SendData(28, -1, -1, NetworkText.FromLiteral(""), npc.whoAmI, (float)1, 1f, (float)1, (int)(projectile.damage / 5));
 						timer = 0;
 					}
 				}

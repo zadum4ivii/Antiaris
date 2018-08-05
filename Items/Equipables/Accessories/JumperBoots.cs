@@ -32,7 +32,7 @@ namespace Antiaris.Items.Equipables.Accessories
 			player.jumpBoost = true;
 			player.autoJump = true;
 			player.noFallDmg = true;
-			
+
             if (!player.mount.Active && player.velocity.Y > 0f)
             {
                 var checkDamagePlayer = player.getRect();
@@ -49,20 +49,19 @@ namespace Antiaris.Items.Equipables.Accessories
                         {
                             var damage = 20f * player.meleeDamage;
                             var knockBack = 5f;
-                            var direction = player.direction;
-                            if (player.velocity.X < 0f)
+                            var direction = npc.direction;
+                            if (npc.velocity.X < 0f)
                             {
                                 direction = -1;
                             }
-                            if (player.velocity.X > 0f)
+                            if (npc.velocity.X > 0f)
                             {
                                 direction = 1;
                             }
-                            if (player.whoAmI == Main.myPlayer)
-                            {
-                                npc.StrikeNPC((int)damage, knockBack, direction, false, false, false);
-                            }
-                            npc.immune[player.whoAmI] = 10;
+                            npc.StrikeNPC((int)damage, knockBack, direction, Main.rand.Next(2) == 0 ? true : false, false, false);
+							if (Main.netMode != 0)
+								NetMessage.SendData(28, -1, -1, NetworkText.FromLiteral(""), npc.whoAmI, (float)1, knockBack, (float)direction, (int)damage);
+							npc.immune[player.whoAmI] = 10;
                             player.velocity.Y = -10f;
                             player.immune = true;
                             break;

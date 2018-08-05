@@ -68,9 +68,15 @@ namespace Antiaris.NPCs.Enemies
 					Item.NewItem((int)npc.position.X, (int)npc.position.Y, npc.width, npc.height, mod.ItemType("LiquidEmerald"), Main.rand.Next(2, 5), false, 0, false, false);
 				}
             }
-            var questSystem = Main.player[Main.myPlayer].GetModPlayer<QuestSystem>(mod);
+            int playerIndex = npc.lastInteraction;
+			if (!Main.player[playerIndex].active || Main.player[playerIndex].dead)
+			{
+				playerIndex = npc.FindClosestPlayer();
+			}
+			Player player = Main.player[playerIndex];
+            var questSystem = Main.player[playerIndex].GetModPlayer<QuestSystem>(mod);
             int number = 0;
-            if (questSystem.CurrentQuest == QuestItemID.EmeraldShard)
+            if (questSystem.currentQuest == QuestItemID.EmeraldShard)
             {
                 number = Item.NewItem((int)npc.position.X, (int)npc.position.Y, npc.width, npc.height, mod.ItemType("EmeraldShard"), Main.rand.Next(4, 7), false, 0, false, false);
                 if (Main.netMode == 1 && number >= 0)

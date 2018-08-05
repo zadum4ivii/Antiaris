@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using TerrariaOverhaul;
 
 namespace Antiaris.Items.Weapons.Magic
 {
@@ -36,6 +37,11 @@ namespace Antiaris.Items.Weapons.Magic
             DisplayName.SetDefault("Staff of Black & White");
 			DisplayName.AddTranslation(GameCulture.Chinese, "阴阳杖");
             DisplayName.AddTranslation(GameCulture.Russian, "Посох чёрного и белого");
+        }
+
+        public void OverhaulInit()
+        {
+            this.SetTag("magicWeapon", false);
         }
 
         public override void AddRecipes()

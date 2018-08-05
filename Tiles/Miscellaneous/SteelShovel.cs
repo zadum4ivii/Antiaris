@@ -37,5 +37,10 @@ namespace Antiaris.Tiles.Miscellaneous
 			player.showItemIcon = true;
 			player.showItemIcon2 = mod.ItemType("SteelShovel");
 		}
+
+        public override void RightClick(int x, int y)
+		{
+	        WorldGen.KillTile(x, y, false, false, false);
+        }
     }
 }

@@ -24,6 +24,7 @@ namespace Antiaris
 		public static Mod kRPG;
 		public static Mod RockosARPG;
 		public static Mod TerrariaOverhaul;
+        public static Mod Unleveled;
         public static Texture2D cQuestTexture;
         public static Mod Instance;
         public static int coin;
@@ -86,6 +87,20 @@ namespace Antiaris
                     int transformedNPC2 = reader.ReadInt32();
                     Main.npc[transformedNPC2].Transform(mod.NPCType("Adventurer"));
                     break;
+                case 3:
+                    if (Main.netMode == NetmodeID.MultiplayerClient)
+                        return;
+					int player = reader.ReadInt32();
+                    int currentQuest = reader.ReadInt32();
+                    Main.player[player].GetModPlayer<QuestSystem>(mod).CurrentQuest = currentQuest;
+                    break;
+				case 4:
+                    if (Main.netMode == NetmodeID.MultiplayerClient)
+                        return;
+					int player2 = reader.ReadInt32();
+                    int currentPirateQuest = reader.ReadInt32();
+                    Main.player[player2].GetModPlayer<Pirate.PirateQuestSystem>(mod).CurrentPirateQuest = currentPirateQuest;
+                    break;
             }
             if (Main.netMode != 2)
                 return;
@@ -97,6 +112,8 @@ namespace Antiaris
 			Thorium = ModLoader.GetMod("ThoriumMod");
 			kRPG = ModLoader.GetMod("kRPG");
 			RockosARPG = ModLoader.GetMod("RockosARPG");
+            kRPG = ModLoader.GetMod("kRPG");
+            Unleveled = ModLoader.GetMod("Unleveled");
             TerrariaOverhaul = ModLoader.GetMod("TerrariaOverhaul");
             var bossChecklist = ModLoader.GetMod("BossChecklist");
             if (bossChecklist != null)
@@ -295,12 +312,7 @@ namespace Antiaris
             text.AddTranslation(GameCulture.Russian, "Во время моих путешествий я часто был близок к смерти, но ты знаешь, что мы говорим смерти? Не сегодня.");
 			AddTranslation(text);
 
-			int angler = NPC.FindFirstNPC(NPCID.Angler);
-			var anglerName = "";
-			if (angler >= 0)
-			{
-				anglerName = Main.npc[angler].GivenName;
-			}
+			string anglerName = NPC.GetFirstNPCNameOrNull(NPCID.Angler);
 			text = CreateTranslation("Adventurer7");
 			text.SetDefault("Do you help this kid, " + anglerName + ", with his needs? You know, I need help more then him and I also provide pretty better rewards for you.");
             text.AddTranslation(GameCulture.Chinese, "你帮这个熊孩子，" + anglerName + "，满足需求吗？你懂得，我更需要你的帮助，我也会给你带来更好的回报。"); 
@@ -398,7 +410,7 @@ namespace Antiaris
 			AddTranslation(text);
 			
 			text = CreateTranslation("Quest5");
-            text.SetDefault("I think I just had a brilliant idea... I'll need an apple that's covered in pure gold. But I can't just go and get that kind of thing in a shop! Сan you help me out with this? Don't ask why I need the apple, you'll see later.");
+            text.SetDefault("I think I just had a brilliant idea... I'll need an apple that's covered in pure gold. But I can't just go and get that kind of thing in a shop! Can you help me out with this? Don't ask why I need the apple, you'll see later.");
             text.AddTranslation(GameCulture.Chinese, "我有一个有趣的主意...我需要一个纯金的苹果。但我不能在商店买到那种东西！你能帮我这个忙吗？不要问我为什么需要它，以后你会明白的。");
             text.AddTranslation(GameCulture.Russian, "Хм, кажется, у меня появилась гениальная идея... Мне понадобится яблоко, покрытое чистым золотом. Но ведь такое в магазине не купишь! Может, ты мне поможешь? Не спрашивай, зачем мне это яблоко, потом узнаешь.");
 			AddTranslation(text);
@@ -545,54 +557,54 @@ namespace Antiaris
 			text.SetDefault("'Delicious food'");
 			text.AddTranslation(GameCulture.Chinese, "“美味佳肴”");
 			text.AddTranslation(GameCulture.Russian, "'Изысканная еда'");
-			AddTranslation(text);
-			
-			text = CreateTranslation("Quest16");
-            text.SetDefault("Did you know that if you cut down burnt trees you will get charcoal? I bet you did not. Well, since now you have this information, can you please get me 25 charcoal? I really need it to make some torches!");
-            text.AddTranslation(GameCulture.Chinese, "你知道如果砍伐烧焦的树木会得到木炭吗？ 我赌五毛你肯定不知道。 那么，既然你了解到了这些，能给我25个木炭吗？ 我真的需要它来制作一些火把！");
-            text.AddTranslation(GameCulture.Russian, "А ты знал, что если срубить сгоревшие дерева, то получишь древесный уголь? Спорю, что не знал. Что же, раз теперь ты владеешь такой информацией, можешь ли ты принести мне 25 древесного угля? Он очень нужен мне для создания факелов!");
-			AddTranslation(text);
-
-			text = CreateTranslation("Name16");
-			text.SetDefault("'Hot to the touch'");
-			text.AddTranslation(GameCulture.Chinese, "“触手可及”");
-			text.AddTranslation(GameCulture.Russian, "'Горячий на ощупь");
 			AddTranslation(text);			
 
-			text = CreateTranslation("Quest17");
+			text = CreateTranslation("Quest16");
             text.SetDefault("I'm currently trying to make a potion that will allow one to climb on walls. A potion like this would be very useful for my adventures! The problem is that I need some spider samples to make it and I am... Afraid of spiders. Can you gather 12 spider masses for me? Just go to a spider nest, kill some baby creepers and then gather the mass.");
             text.AddTranslation(GameCulture.Chinese, "我正在尝试制作一种可以让人进行攀爬的药水。这样的药水对我的冒险而言非常有用！问题是我需要一些蜘蛛样本来制作，但是…我怕蜘蛛…你能帮我收集12个蜘蛛分泌物吗？只需要去蜘蛛洞杀掉一些爬行者幼体来采集分泌物。");
             text.AddTranslation(GameCulture.Russian, "Сейчас я пытаюсь сделать зелье, которое позволит ползать по стенам. Такое зелье было бы очень полезным для моих приключений! Но проблема в том, что мне нужно немного образцов пауков, чтобы сделать его, а я... Боюсь пауков. Можешь ли ты собрать 12 паучих масс для меня? Просто иди в гнездо пауков, убей немного маленьких паучков и затем собери массу.");
 			AddTranslation(text);
 			
-			text = CreateTranslation("Name17");
+			text = CreateTranslation("Name16");
 			text.SetDefault("'Arachnophobia'");
 			text.AddTranslation(GameCulture.Chinese, "“蜘蛛恐惧症”");
 			text.AddTranslation(GameCulture.Russian, "'Арахнофобия'");
 			AddTranslation(text);
 
-			text = CreateTranslation("Quest18");
+			text = CreateTranslation("Quest17");
             text.SetDefault("I'm really-really upset right now! Wanna know what happened? I was making a presents for my friends. When I've made 20 of them, a monster whose name is Krampus came and stole the presents! I really don't want my friends to be left without presents from me this year! Please, find that monster and bring my presents back!");
             text.AddTranslation(GameCulture.Chinese, "我现在真的很难过！想知道发生了什么事了吗？我在给朋友做礼物，当我做了第20件时，一个叫 Krampus 的怪物把礼物全偷走了！我真的不想让我的朋友今年不给我送礼物！请找到那个怪物，把我的礼物夺回来！");
             text.AddTranslation(GameCulture.Russian, "Я очень-очень расстроен! Хочешь знать, что произошло? Я делал подарки для моих друзей. Когда я сделал 20, монстр, чьё имя Крампус, пришёл и украл подарки! Я очень не хочу, чтоб мои друзья остались без подарков от меня в этом году! Пожалуйста, найди этого монстра и верни мои подарки!");
 			AddTranslation(text);		
 			
-			text = CreateTranslation("Name18");
+			text = CreateTranslation("Name17");
 			text.SetDefault("'Stolen Christmas'");
 			text.AddTranslation(GameCulture.Chinese, "被盗的圣诞节");
 			text.AddTranslation(GameCulture.Russian, "'Украденное Рожедство'");
 			AddTranslation(text);
 
-			text = CreateTranslation("Quest19");
+			text = CreateTranslation("Quest18");
             text.SetDefault("There're rumors about very strange slimes living deep in the caves. You probably wonder why strange, right? That's because those chunks of gel eat emeralds! That's why they're covered with emerald shards like with a shell. Bring me some of these shards and I'll create something. Now go!");
             text.AddTranslation(GameCulture.Chinese, "有传言说在地下深处生存着非常古怪的史莱姆。你肯定想知道它为什么古怪，对吧？那是因为这些凝胶居然吃翡翠！这就是为什么它们被像是翡翠的东西包裹住，给我点它们的碎片，我会做点有趣的东西，出发吧！");
             text.AddTranslation(GameCulture.Russian, "Ходят слухи об очень странных слизнях, живущих глубоко в пещерах. Ты наверное думаешь, почему о странных, да? Всё потому что эти куски геля едят изумруды! Именно поэтому они покрыты изумрудными осколками, как будто панцирем. Принеси мне немного этих осколков и я кое-что сделаю. Иди же!");
 			AddTranslation(text);
 
-			text = CreateTranslation("Name19");
+			text = CreateTranslation("Name18");
 			text.SetDefault("'Slimes that eat emeralds'");
 			text.AddTranslation(GameCulture.Chinese, "“吃翡翠的史莱姆”");
 			text.AddTranslation(GameCulture.Russian, "'Слизни, что едят изумруды'");
+			AddTranslation(text);	
+
+			text = CreateTranslation("Quest19");
+            text.SetDefault("Did you know that if you cut down burnt trees you will get charcoal? I bet you did not. Well, since now you have this information, can you please get me 25 charcoal? I really need it to make some torches!");
+            text.AddTranslation(GameCulture.Chinese, "你知道如果砍伐烧焦的树木会得到木炭吗？ 我赌五毛你肯定不知道。 那么，既然你了解到了这些，能给我25个木炭吗？ 我真的需要它来制作一些火把！");
+            text.AddTranslation(GameCulture.Russian, "А ты знал, что если срубить сгоревшие дерева, то получишь древесный уголь? Спорю, что не знал. Что же, раз теперь ты владеешь такой информацией, можешь ли ты принести мне 25 древесного угля? Он очень нужен мне для создания факелов!");
+			AddTranslation(text);
+
+			text = CreateTranslation("Name19");
+			text.SetDefault("'Hot to the touch'");
+			text.AddTranslation(GameCulture.Chinese, "“触手可及”");
+			text.AddTranslation(GameCulture.Russian, "'Горячий на ощупь");
 			AddTranslation(text);			
 
 			text = CreateTranslation("ThanksShards");
@@ -946,7 +958,7 @@ namespace Antiaris
             text = CreateTranslation("HarpyEggBroken");
             text.SetDefault("<{0}> Great, the egg got destroyed! Now I have to find another one.");
             text.AddTranslation(GameCulture.Russian, "<{0}> Отлично, яйцо было уничтожено! Теперь мне придется искать ещё одно.");
-            text.AddTranslation(GameCulture.Chinese, "<{ 0}> 漂亮，蛋已经被破坏了！现在我必须要找到下一个。");
+            text.AddTranslation(GameCulture.Chinese, "<{0}> 漂亮，蛋已经被破坏了！现在我必须要找到下一个。");
             AddTranslation(text);
 
             text = CreateTranslation("HarpyEggDeath");
@@ -965,6 +977,7 @@ namespace Antiaris
 			kRPG = null;
 			RockosARPG = null;
             TerrariaOverhaul = null;
+            Unleveled = null;
             stand = null;
             hideTracker = null;
             trackerTexture = null;
@@ -1268,7 +1281,7 @@ namespace Antiaris
                     InterfaceScaleType.UI);
                 layers.Insert(index, UIState);
             }
-			if (Antiaris.kRPG == null && Antiaris.RockosARPG == null)
+			if (Antiaris.kRPG == null && Antiaris.RockosARPG == null && Antiaris.Unleveled == null)
 			{
 				var heartLayer = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Inventory"));
 				var heartState = new LegacyGameInterfaceLayer("Antiaris: UI2",

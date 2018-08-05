@@ -92,19 +92,6 @@ namespace Antiaris
             }
             var player = owner;
 			var aPlayer = player.GetModPlayer<AntiarisPlayer>(mod);
-            if (projectile.type == 486 && projectile.aiStyle == 88 && projectile.knockBack == .5f || (projectile.knockBack >= .2f && projectile.knockBack < .5f))
-            {
-                projectile.hostile = false;
-                projectile.friendly = true;
-                projectile.magic = true;
-                projectile.penetrate = -1;
-                if ((projectile.knockBack >= .45f && projectile.knockBack < .5f) && projectile.oldVelocity != projectile.velocity && Main.rand.Next(0, 4) == 0)
-                {
-                    projectile.knockBack -= .0125f;
-                    Vector2 vector83 = projectile.velocity.RotatedByRandom(.1f);
-                    Projectile.NewProjectile(projectile.Center.X, projectile.Center.Y, vector83.X, vector83.Y, projectile.type, projectile.damage, projectile.knockBack - .025f, projectile.owner, projectile.velocity.ToRotation(), projectile.ai[1]);
-                }
-            }
 			
             if (projectile.minion)
             {

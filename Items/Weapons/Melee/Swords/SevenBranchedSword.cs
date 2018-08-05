@@ -64,7 +64,9 @@ namespace Antiaris.Items.Weapons.Melee.Swords
                             direction = 1;
                         }
                         Main.npc[k].StrikeNPC(DealDamage, knockback / 2.0f, direction, crit, false, false);
-                    }
+						if (Main.netMode != 0)
+							NetMessage.SendData(28, -1, -1, NetworkText.FromLiteral(""), Main.npc[k].whoAmI, (float)1, knockback / 2, (float)direction, DealDamage);
+					}
                 }
             }
         }

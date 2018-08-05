@@ -46,7 +46,7 @@ namespace Antiaris.Items.Consumables.Miscellaneous
             if (!player.GetModPlayer<QuestSystem>(mod).CompletedToday && player.GetModPlayer<QuestSystem>(mod).CurrentQuest >= 0 && player.GetModPlayer<QuestSystem>(mod).CurrentQuest != -1)
             { 
                 int quest = Main.rand.Next(19);
-                if (quest != 6 && quest != 12 && quest != 16 && quest != 18)
+                if (quest != 6 && quest != 12 && quest != 17 && quest != 19)
                 {
                     player.GetModPlayer<QuestSystem>(mod).CurrentQuest = quest;
                 }

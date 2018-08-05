@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using TerrariaOverhaul;
 
 namespace Antiaris.Items.Weapons.Magic
 {
@@ -30,6 +31,11 @@ namespace Antiaris.Items.Weapons.Magic
             item.shoot = mod.ProjectileType("CosmicRay");
             item.shootSpeed = 6f;
             item.mana = 6;
+        }
+
+        public void OverhaulInit()
+        {
+            this.SetTag("magicWeapon", false);
         }
 
         public override void SetStaticDefaults()

@@ -192,6 +192,8 @@ namespace Antiaris.Projectiles.Magic
                             direction = 1;
                         }
 						Main.npc[projTargetIndex].StrikeNPC((int)11, 1f, direction , false, false, false);
+						if (Main.netMode != 0)
+							NetMessage.SendData(28, -1, -1, NetworkText.FromLiteral(""), Main.npc[projTargetIndex].whoAmI, (float)1, 1f, (float)direction, 11);
 					}
 				}
 				else // Otherwise, kill the projectile
